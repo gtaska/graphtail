@@ -1,0 +1,47 @@
+cmake_minimum_required (VERSION 3.19)
+
+project(graphtail)
+
+macro(graphtail_option OPTION_NAME OPTION_TEXT OPTION_DEFAULT)
+    option(${OPTION_NAME} ${OPTION_TEXT} ${OPTION_DEFAULT})
+    if(DEFINED ENV{${OPTION_NAME}})
+        # Allow overriding the option through an environment variable
+        set(${OPTION_NAME} $ENV{${OPTION_NAME}})
+    endif()
+    if(${OPTION_NAME})
+        add_definitions(-D${OPTION_NAME})
+    endif()
+    message(STATUS "${OPTION_NAME}: ${${OPTION_NAME}}")
+endmacro()
+
+set(CMAKE_MODULE_PATH
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
+  ${CMAKE_MODULE_PATH})
+
+include(FetchContent)
+
+FetchContent_Declare(
+      sdl
+      GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+      GIT_TAG release-2.0.14)
+FetchContent_MakeAvailable(sdl)
+
+if (MSVC)
+    # warning level 4 and all warnings as errors
+    add_compile_options(/W4 /WX /wd4996)
+	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+else()
+    # lots of warnings and all warnings as errors
+    add_compile_options(
+		-Wall 
+		-Wextra 
+		-pedantic 
+		-Werror 
+		-Wno-unused-function 	# I want unused functions for debugging purposes
+		-Wno-reorder			# I want to be able to initialize class members in any order
+		-Wno-class-memaccess	# I want to be able to memset() things that I know are safe to memset()
+	)	
+endif()
+
+add_subdirectory(src)
+
