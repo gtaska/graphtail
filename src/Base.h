@@ -5,9 +5,11 @@
 #else
 	#include <sys/types.h>
 	#include <sys/stat.h>
+	#include <signal.h>
 #endif
 
 #include <fcntl.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
