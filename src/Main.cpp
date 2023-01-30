@@ -11,8 +11,6 @@ main(
 	char**	aArgs)
 {
 	graphtail::Config config(aNumArgs, aArgs);
-
-	config.m_inputs = { "D:\\git\\jelly\\build\\test\\test.csv" };
 	
 	graphtail::SDLWindow window(&config);
 	graphtail::Graphs graphs(&config);

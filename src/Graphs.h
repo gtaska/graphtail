@@ -1,11 +1,10 @@
 #pragma once
 
+#include "Config.h"
 #include "CSVTail.h"
 
 namespace graphtail
 {
-
-	struct Config;
 
 	class Graphs
 		: public CSVTail::IListener
@@ -61,22 +60,11 @@ namespace graphtail
 
 		struct DataGroup
 		{
-			DataGroup()
+			DataGroup(
+				const Config::Group*										aConfig = NULL)
+				: m_config(aConfig)
 			{
 
-			}
-
-			Data*
-			FindData(
-				const char*													aId)
-			{
-				for(std::unique_ptr<Data>& data : m_data)
-				{
-					if(data->m_id == aId)
-						return data.get();
-				}
-
-				return NULL;
 			}
 
 			Data*
@@ -88,6 +76,8 @@ namespace graphtail
 			}			
 
 			// Public data
+			const Config::Group*				m_config;
+
 			std::vector<std::unique_ptr<Data>>	m_data;
 		};
 

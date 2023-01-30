@@ -1,6 +1,5 @@
 #include "Base.h"
 
-#include "Config.h"
 #include "Graphs.h"
 
 namespace graphtail
@@ -10,7 +9,9 @@ namespace graphtail
 		const Config*		aConfig)
 		: m_config(aConfig)
 	{
-
+		// Initialize groups
+		for(const std::unique_ptr<Config::Group>& configGroup : aConfig->m_groups)
+			m_dataGroups.push_back(std::make_unique<DataGroup>(configGroup.get()));
 	}
 	
 	Graphs::~Graphs()
@@ -47,16 +48,33 @@ namespace graphtail
 
 		Data* data = NULL;
 
+		// See if any group has a id-wildcard that matches this
 		for(std::unique_ptr<DataGroup>& dataGroup : m_dataGroups)
 		{
-			data = dataGroup->FindData(aId);
+			if(dataGroup->m_config != NULL)
+			{
+				bool matchesWildcard = false;
 
-			if(data != NULL)
-				break;
+				for(const std::unique_ptr<Wildcard>& wildcard : dataGroup->m_config->m_idWildcards)
+				{
+					if(wildcard->Match(aId))
+					{
+						matchesWildcard = true;
+						break;
+					}
+				}
+
+				if(matchesWildcard)
+				{
+					data = dataGroup->CreateData(aId);
+					break;
+				}
+			}
 		}
 
 		if(data == NULL)
 		{
+			// No matching group, create a new automatic group
 			DataGroup* dataGroup = _CreateDataGroup();
 
 			data = dataGroup->CreateData(aId);

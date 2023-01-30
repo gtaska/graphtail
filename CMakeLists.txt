@@ -15,16 +15,29 @@ macro(graphtail_option OPTION_NAME OPTION_TEXT OPTION_DEFAULT)
 endmacro()
 
 set(CMAKE_MODULE_PATH
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
-  ${CMAKE_MODULE_PATH})
+	"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
+	${CMAKE_MODULE_PATH})
+	
+set(BUILD_SHARED_LIBS OFF)
 
 include(FetchContent)
 
 FetchContent_Declare(
-      sdl
-      GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-      GIT_TAG release-2.0.14)
-FetchContent_MakeAvailable(sdl)
+	brotli
+	GIT_REPOSITORY https://github.com/google/brotli
+	GIT_TAG v1.0.9)
+
+FetchContent_Declare(
+	SDL
+	GIT_REPOSITORY https://github.com/libsdl-org/SDL
+	GIT_TAG release-2.0.22)
+
+FetchContent_Declare(
+	SDL_ttf
+	GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf
+	GIT_TAG release-2.20.1)
+		
+FetchContent_MakeAvailable(SDL SDL_ttf brotli)
 
 if (MSVC)
     # warning level 4 and all warnings as errors
