@@ -31,18 +31,18 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(brotli)	
 
 if(GRAPHTAIL_FORCE_USE_SYSTEM_SDL)
-	find_package(SDL)
+	find_package(SDL2)
 	if(SDL_FOUND)
-		message(STATUS "SDL ${SDL_VERSION_STRING} found on this system.")
+		message(STATUS "SDL2 ${SDL2_VERSION_STRING} found on this system.")
 	else()
-		message(FATAL_ERROR "SDL not found on this system.")
+		message(FATAL_ERROR "SDL2 not found on this system.")
 	endif()
 else()
 	FetchContent_Declare(
-		SDL
+		SDL2
 		GIT_REPOSITORY https://github.com/libsdl-org/SDL
 		GIT_TAG release-2.0.22)
-	FetchContent_MakeAvailable(SDL)
+	FetchContent_MakeAvailable(SDL2)
 endif()
 		
 FetchContent_Declare(
