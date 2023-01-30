@@ -14,6 +14,8 @@ macro(graphtail_option OPTION_NAME OPTION_TEXT OPTION_DEFAULT)
     message(STATUS "${OPTION_NAME}: ${${OPTION_NAME}}")
 endmacro()
 
+option(GRAPHTAIL_FORCE_USE_SYSTEM_SDL)
+
 set(CMAKE_MODULE_PATH
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
 	${CMAKE_MODULE_PATH})
@@ -26,18 +28,28 @@ FetchContent_Declare(
 	brotli
 	GIT_REPOSITORY https://github.com/google/brotli
 	GIT_TAG v1.0.9)
+FetchContent_MakeAvailable(brotli)	
 
-FetchContent_Declare(
-	SDL
-	GIT_REPOSITORY https://github.com/libsdl-org/SDL
-	GIT_TAG release-2.0.22)
-
+if(GRAPHTAIL_FORCE_USE_SYSTEM_SDL)
+	find_package(SDL)
+	if(SDL_FOUND)
+		message(STATUS "SDL ${SDL_VERSION_STRING} found on this system.")
+	else()
+		message(FATAL_ERROR "SDL not found on this system.")
+	endif()
+else()
+	FetchContent_Declare(
+		SDL
+		GIT_REPOSITORY https://github.com/libsdl-org/SDL
+		GIT_TAG release-2.0.22)
+	FetchContent_MakeAvailable(SDL)
+endif()
+		
 FetchContent_Declare(
 	SDL_ttf
 	GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf
-	GIT_TAG release-2.20.1)
-		
-FetchContent_MakeAvailable(SDL SDL_ttf brotli)
+	GIT_TAG release-2.20.1)			
+FetchContent_MakeAvailable(SDL_ttf)
 
 if (MSVC)
     # warning level 4 and all warnings as errors

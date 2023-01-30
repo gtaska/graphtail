@@ -2,6 +2,9 @@
 
 #if defined(_WIN32)
 	#include <io.h>
+#else
+	#include <sys/types.h>
+	#include <sys/stat.h>
 #endif
 
 #include <fcntl.h>
