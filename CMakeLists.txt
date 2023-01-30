@@ -14,7 +14,7 @@ macro(graphtail_option OPTION_NAME OPTION_TEXT OPTION_DEFAULT)
     message(STATUS "${OPTION_NAME}: ${${OPTION_NAME}}")
 endmacro()
 
-option(GRAPHTAIL_FORCE_USE_SYSTEM_SDL)
+graphtail_option(GRAPHTAIL_FORCE_USE_SYSTEM_SDL "Force use system SDL." OFF)
 
 set(CMAKE_MODULE_PATH
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
