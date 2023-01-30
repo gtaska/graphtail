@@ -32,7 +32,7 @@ FetchContent_MakeAvailable(brotli)
 
 if(GRAPHTAIL_FORCE_USE_SYSTEM_SDL)
 	find_package(SDL2)
-	if(SDL_FOUND)
+	if(SDL2_FOUND)
 		message(STATUS "SDL2 ${SDL2_VERSION_STRING} found on this system.")
 	else()
 		message(FATAL_ERROR "SDL2 not found on this system.")
