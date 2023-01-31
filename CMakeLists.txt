@@ -49,6 +49,9 @@ set(SDL_SENSOR OFF)
 set(SDL_LOCALE OFF)
 set(SDL_MISC OFF)
 
+set(SDL2_DISABLE_INSTALL ON)
+set(SDL2_DISABLE_UNINSTALL ON)
+
 FetchContent_Declare(
 	SDL2
 	GIT_REPOSITORY https://github.com/libsdl-org/SDL
@@ -61,6 +64,7 @@ set(SDL2_LIBRARIES SDL2-static SDL2main)
 # ------ SDL2_ttf ------
 set(SDL2TTF_SAMPLES OFF)
 set(SDL2TTF_BUILD_SHARED_LIBS OFF)
+set(SDL2TTF_INSTALL OFF)
 
 FetchContent_Declare(
 	SDL_ttf
