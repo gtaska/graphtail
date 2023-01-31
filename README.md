@@ -1,4 +1,6 @@
 # graphtail
+[![Build](https://github.com/demogorgon1/graphtail/actions/workflows/cmake.yml/badge.svg)](https://github.com/demogorgon1/graphtail/actions/workflows/cmake.yml)
+
 You've got a program that outputs a bunch of numbers to a CSV file? You want to visualize those numbers with graphs 
 in real-time, while the program is still running and appending new numbers?
 If you can say yes to both those questions, _graphtail_ might be the tool you need.
