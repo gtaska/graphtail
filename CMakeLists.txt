@@ -38,6 +38,19 @@ FetchContent_MakeAvailable(brotli)
 
 set(BROTLI_LIBRARIES_STATIC brotlidec-static)
 
+# ------ SDL2_ttf ------
+set(SDL2TTF_SAMPLES OFF)
+set(SDL2TTF_BUILD_SHARED_LIBS OFF)
+
+FetchContent_Declare(
+	SDL_ttf
+	GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf
+	GIT_TAG release-2.20.1)			
+FetchContent_MakeAvailable(SDL_ttf)
+
+set(SDL_TTF_INCLUDE_DIRS "${SDL2_ttf_SOURCE_DIR}/include")
+set(SDL_TTF_LIBRARIES SDL2_ttf)
+
 # ------ SDL2 ------
 if(GRAPHTAIL_FORCE_USE_SYSTEM_SDL)
 	find_package(SDL2 REQUIRED)
@@ -55,19 +68,6 @@ else()
 	set(SDL_INCLUDE_DIRS "${SDL2_SOURCE_DIR}/include")
 	set(SDL_LIBRARIES SDL2-static SDL2main)
 endif()
-
-# ------ SDL2_ttf ------
-set(SDL2TTF_SAMPLES OFF)
-set(SDL2TTF_BUILD_SHARED_LIBS OFF)
-
-FetchContent_Declare(
-	SDL_ttf
-	GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf
-	GIT_TAG release-2.20.1)			
-FetchContent_MakeAvailable(SDL_ttf)
-
-set(SDL_TTF_INCLUDE_DIRS "${SDL2_ttf_SOURCE_DIR}/include")
-set(SDL_TTF_LIBRARIES SDL2_ttf)
 
 # ------ Compile options ------
 if (MSVC)
