@@ -292,6 +292,48 @@ namespace
 	}
 
 	size_t
+	_ParseGroupParameter(
+		const char*												aString,
+		graphtail::Config::Group*								aGroup)
+	{
+		size_t i = 0;
+		std::vector<char> arg;
+		std::vector<char> value;
+		bool inValue = false;
+
+		while (aString[i] != '\0')
+		{
+			char c = aString[i++];
+
+			if (c == '!' || c == '}')
+			{
+				i--;
+				break;
+			}
+			else if (c == '=')
+			{
+				inValue = true;
+			}
+			else if(inValue)
+			{				
+				value.push_back(c);
+			}
+			else
+			{
+				arg.push_back(c);
+			}
+		}
+
+		arg.push_back('\0');
+		value.push_back('\0');
+
+		if(!aGroup->m_config.TrySetMember(&arg[0], &value[0]))
+			GRAPHTAIL_FATAL_ERROR("Invalid group parameter: %s", &arg[0]);
+
+		return i;
+	}
+
+	size_t
 	_ParseGroup(
 		const char*												aString,
 		std::vector<std::unique_ptr<graphtail::Config::Group>>& aGroups)
@@ -308,6 +350,8 @@ namespace
 				break;
 			else if(c == 'i')
 				i += _ParseInput(aString + i, group.get());
+			else if(c == '!')
+				i += _ParseGroupParameter(aString + i, group.get());
 			else
 				GRAPHTAIL_FATAL_ERROR("Unexpected '%c' in group definition.", c);
 		}
@@ -344,10 +388,58 @@ namespace
 		return (uint32_t)v;
 	}
 
+	float
+	_ParseFloat(
+		const char*												aString)
+	{
+		float v = (float)atof(aString);
+		return v;
+	}
+
 }
 
 namespace graphtail
 {
+
+	bool	
+	Config::GroupConfig::TrySetMember(
+		const std::string&										aArg,
+		const std::string&										aValue)
+	{
+		if(aArg == "x_step")
+		{
+			m_xStep = _ParseUInt(aValue.c_str());
+			return true;
+		}
+		else if (aArg == "y_min")
+		{
+			m_yMin = _ParseFloat(aValue.c_str());
+			return true;
+		}
+		else if (aArg == "y_max")
+		{
+			m_yMax = _ParseFloat(aValue.c_str());
+			return true;
+		}
+
+		return false;
+	}
+
+	void	
+	Config::GroupConfig::ApplyDefaults(
+		const GroupConfig&										aDefaults)
+	{
+		if(!m_xStep.has_value())
+			m_xStep = aDefaults.m_xStep;
+
+		if (!m_yMin.has_value())
+			m_yMin = aDefaults.m_yMin;
+
+		if (!m_yMax.has_value())
+			m_yMax = aDefaults.m_yMax;
+	}
+
+	//------------------------------------------------------------------------------------
 
 	Config::Config(
 		int														aNumArgs,
@@ -380,6 +472,8 @@ namespace graphtail
 		}
 
 		// Apply configuration
+		GroupConfig defaultGroupConfig;
+
 		std::unordered_map<std::string, std::string>::const_iterator i = configTable.cbegin();
 		for(; i != configTable.cend(); i++)
 		{
@@ -398,9 +492,13 @@ namespace graphtail
 				m_fontSize = _ParseUInt(value.c_str());
 			else if(arg == "groups")
 				_ParseGroups(value.c_str(), m_groups);
-			else
+			else if(defaultGroupConfig.TrySetMember(arg, value))
 				GRAPHTAIL_FATAL_ERROR("Invalid configuration item: %s", arg.c_str());
 		}
+
+		// Apply group config defaults to unassigned values
+		for(std::unique_ptr<Group>& group : m_groups)
+			group->m_config.ApplyDefaults(defaultGroupConfig);
 	}
 	
 	Config::~Config()

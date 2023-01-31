@@ -181,12 +181,15 @@ namespace graphtail
 
 				if(dataGroup->m_data.size() > 0)
 				{
+					float valueMin = dataGroup->GetMin();
+					float valueMax = dataGroup->GetMax();
+
+					float valueRange = valueMax - valueMin;
+
 					for(const std::unique_ptr<Graphs::Data>& data : dataGroup->m_data)
 					{
 						if(data->m_values.size() == 0)
 							continue;
-
-						float valueRange = data->m_max - data->m_min;
 
 						const Config::Color& color = m_config->m_graphColors[colorIndex % m_config->m_graphColors.size()];
 
@@ -213,27 +216,10 @@ namespace graphtail
 						{
 							m_tempGraphPoints.clear();
 
-							if(data->m_values.size() < (size_t)windowWidth)
-							{
-								for (size_t i = 0; i < data->m_values.size(); i++)
-								{
-									int x = ((int)i * windowWidth) / (int)(data->m_values.size() - 1);
-									int y = (int)dataGroupWindowHeight - (int)(((data->m_values[i] - data->m_min) / valueRange) * (float)dataGroupWindowHeight) + (int)dataGroupY;
-
-									m_tempGraphPoints.push_back({ x, y });
-								}
-							}
+							if(dataGroup->m_config->m_config.m_xStep.has_value())
+								_CreateFixedXStepGraph(data.get(), windowWidth, dataGroupWindowHeight, dataGroupY, valueMin, valueRange, dataGroup->m_config->m_config.m_xStep.value());
 							else
-							{
-								for(int x = 0; x < windowWidth; x++)
-								{
-									size_t i = ((size_t)x * data->m_values.size()) / (size_t)windowHeight;
-									GRAPHTAIL_ASSERT(i < data->m_values.size());
-									int y = (int)dataGroupWindowHeight - (int)(((data->m_values[i] - data->m_min) / valueRange) * (float)dataGroupWindowHeight) + (int)dataGroupY;
-
-									m_tempGraphPoints.push_back({ x, y });
-								}
-							}
+								_CreateStretchGraph(data.get(), windowWidth, dataGroupWindowHeight, dataGroupY, valueMin, valueRange);
 
 							SDL_RenderDrawLines(m_renderer, &m_tempGraphPoints[0], (int)m_tempGraphPoints.size());
 						}
@@ -266,11 +252,71 @@ namespace graphtail
 	//----------------------------------------------------------------------------------------
 
 	void	
+	SDLWindow::_CreateStretchGraph(
+		const Graphs::Data*		aData,
+		int						aWindowWidth,
+		uint32_t				aDataGroupWindowHeight,
+		uint32_t				aDataGroupY,
+		float					aValueMin,
+		float					aValueRange)
+	{
+		if (aData->m_values.size() < (size_t)aWindowWidth)
+		{
+			for (size_t i = 0; i < aData->m_values.size(); i++)
+			{
+				int x = ((int)i * aWindowWidth) / (int)(aData->m_values.size() - 1);
+				int y = (int)aDataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)aDataGroupWindowHeight) + (int)aDataGroupY;
+
+				m_tempGraphPoints.push_back({ x, y });
+			}
+		}
+		else
+		{
+			for (int x = 0; x < aWindowWidth; x++)
+			{
+				size_t i = ((size_t)x * aData->m_values.size()) / (size_t)aWindowWidth;
+				GRAPHTAIL_ASSERT(i < aData->m_values.size());
+				int y = (int)aDataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)aDataGroupWindowHeight) + (int)aDataGroupY;
+
+				m_tempGraphPoints.push_back({ x, y });
+			}
+		}
+
+	}
+
+	void	
+	SDLWindow::_CreateFixedXStepGraph(
+		const Graphs::Data*		aData,
+		int						aWindowWidth,
+		uint32_t				aDataGroupWindowHeight,
+		uint32_t				aDataGroupY,
+		float					aValueMin,
+		float					aValueRange,
+		uint32_t				aXStep)
+	{
+		size_t iMin = 0;
+		size_t iMax = aData->m_values.size() - 1;
+
+		if(iMax * (size_t)aXStep > (size_t)aWindowWidth)
+			iMin = (iMax * (size_t)aXStep - (size_t)aWindowWidth) / (size_t)aXStep;
+
+		int x = 0;
+
+		for (size_t i = iMin; i <= iMax; i++)
+		{
+			GRAPHTAIL_ASSERT(i < aData->m_values.size());
+			int y = (int)aDataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)aDataGroupWindowHeight) + (int)aDataGroupY;
+			m_tempGraphPoints.push_back({ x, y });
+			x += (int)aXStep;
+		}
+	}
+
+	void	
 	SDLWindow::_DrawText(
-		int					aX,
-		int					aY,
-		const SDL_Color&	aColor,
-		const char*			aFormat,
+		int						aX,
+		int						aY,
+		const SDL_Color&		aColor,
+		const char*				aFormat,
 		...)
 	{
 		char buffer[1024];

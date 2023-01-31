@@ -4,24 +4,23 @@
 #include <SDL_ttf.h>
 
 #include "FontData.h"
+#include "Graphs.h"
 
 namespace graphtail
 {
 
 	struct Config;
 
-	class Graphs;
-
 	class SDLWindow
 	{
 	public:
 				SDLWindow(
-					Config*				aConfig);
+					Config*					aConfig);
 				~SDLWindow();
 
 		bool	Update();
 		void	DrawGraphs(
-					const Graphs&		aGraphs);
+					const Graphs&			aGraphs);
 
 	private:
 
@@ -38,11 +37,26 @@ namespace graphtail
 		bool					m_windowIsDirty;
 		uint32_t				m_lastDrawnGraphsVersion;
 
+		void	_CreateStretchGraph(
+					const Graphs::Data*		aData,
+					int						aWindowWidth,
+					uint32_t				aDataGroupWindowHeight,
+					uint32_t				aDataGroupY,
+					float					aValueMin,
+					float					aValueRange);
+		void	_CreateFixedXStepGraph(
+					const Graphs::Data*		aData,
+					int						aWindowWidth,
+					uint32_t				aDataGroupWindowHeight,
+					uint32_t				aDataGroupY,
+					float					aValueMin,
+					float					aValueRange,
+					uint32_t				aXStep);
 		void	_DrawText(
-					int					aX,
-					int					aY,
-					const SDL_Color&	aColor,
-					const char*			aFormat,
+					int						aX,
+					int						aY,
+					const SDL_Color&		aColor,
+					const char*				aFormat,
 					...);
 	};
 

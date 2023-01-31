@@ -75,6 +75,44 @@ namespace graphtail
 				return m_data[m_data.size() - 1].get();
 			}			
 
+			float
+			GetMin() const
+			{
+				if(m_config != NULL && m_config->m_config.m_yMin.has_value())
+					return m_config->m_config.m_yMin.value();
+
+				std::optional<float> value;
+
+				for(const std::unique_ptr<Data>& data : m_data)
+				{
+					if(value.has_value())
+						value = std::min<float>(value.value(), data->m_min);
+					else
+						value = data->m_min;
+				}
+
+				return value.has_value() ? value.value() : 0.0f;
+			}
+
+			float
+			GetMax() const
+			{
+				if(m_config != NULL && m_config->m_config.m_yMax.has_value())
+					return m_config->m_config.m_yMax.value();
+
+				std::optional<float> value;
+
+				for(const std::unique_ptr<Data>& data : m_data)
+				{
+					if(value.has_value())
+						value = std::max<float>(value.value(), data->m_max);
+					else
+						value = data->m_max;
+				}
+
+				return value.has_value() ? value.value() : 0.0f;
+			}
+
 			// Public data
 			const Config::Group*				m_config;
 

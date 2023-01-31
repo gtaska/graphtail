@@ -14,19 +14,34 @@ namespace graphtail
 			uint32_t								m_b = 0;
 		};
 
+		struct GroupConfig
+		{
+			bool	TrySetMember(
+						const std::string&		aArgName,
+						const std::string&		aValue);
+			void	ApplyDefaults(
+						const GroupConfig&		aDefaults);
+
+			// Public data
+			std::optional<uint32_t>					m_xStep;
+			std::optional<float>					m_yMin;
+			std::optional<float>					m_yMax;
+		};
+
 		struct Group
 		{
 			std::vector<std::unique_ptr<Wildcard>>	m_idWildcards;
+			GroupConfig								m_config;
 		};
 
-		Config(
-			int		aNumArgs,
-			char**	aArgs);
-		~Config();
+					Config(
+						int						aNumArgs,
+						char**					aArgs);
+					~Config();
 
 		// Public data
-		char										m_rowDelimiter		= '\n';
-		char										m_columnDelimiter	= ';';
+		char										m_rowDelimiter = '\n';
+		char										m_columnDelimiter = ';';
 		std::vector<std::string>					m_inputs;
 		uint32_t									m_width = 1000;
 		uint32_t									m_height = 500;
