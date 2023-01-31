@@ -1,7 +1,6 @@
 #include "Base.h"
 
 #include <brotli/decode.h>
-#include <brotli/encode.h>
 
 #include "ErrorUtils.h"
 #include "FontData.h"
