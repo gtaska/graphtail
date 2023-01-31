@@ -135,7 +135,7 @@ namespace
 		std::vector<char> value;
 		uint32_t lineNum = 1;
 
-		for(size_t i = 0; i < file.m_size; i++)
+		for(size_t i = 0; i < file.m_size + 1; i++)
 		{
 			char c = (char)file.m_data[i];
 
@@ -179,7 +179,7 @@ namespace
 						parseState = PARSE_STATE_VALUE;						
 					}
 				}
-				else if (_IsAlpha(c))
+				else if (_IsAlpha(c) || c == '_')
 				{
 					value.push_back(c);
 				}
@@ -472,8 +472,6 @@ namespace graphtail
 		}
 
 		// Apply configuration
-		GroupConfig defaultGroupConfig;
-
 		std::unordered_map<std::string, std::string>::const_iterator i = configTable.cbegin();
 		for(; i != configTable.cend(); i++)
 		{
@@ -492,13 +490,13 @@ namespace graphtail
 				m_fontSize = _ParseUInt(value.c_str());
 			else if(arg == "groups")
 				_ParseGroups(value.c_str(), m_groups);
-			else if(defaultGroupConfig.TrySetMember(arg, value))
+			else if(!m_defaultGroupConfig.TrySetMember(arg, value))
 				GRAPHTAIL_FATAL_ERROR("Invalid configuration item: %s", arg.c_str());
 		}
 
 		// Apply group config defaults to unassigned values
 		for(std::unique_ptr<Group>& group : m_groups)
-			group->m_config.ApplyDefaults(defaultGroupConfig);
+			group->m_config.ApplyDefaults(m_defaultGroupConfig);
 	}
 	
 	Config::~Config()

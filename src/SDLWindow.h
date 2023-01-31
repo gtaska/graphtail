@@ -24,18 +24,21 @@ namespace graphtail
 
 	private:
 
-		const Config*			m_config;
+		const Config*				m_config;
 
-		SDL_Window*				m_window;
-		SDL_Renderer*			m_renderer;
-		TTF_Font*				m_font;
+		SDL_Window*					m_window;
+		SDL_Renderer*				m_renderer;
+		TTF_Font*					m_font;
 
-		FontData				m_fontData;
-		SDL_RWops*				m_fontDataRW;
+		FontData					m_fontData;
+		SDL_RWops*					m_fontDataRW;
 
-		std::vector<SDL_Point>	m_tempGraphPoints;
-		bool					m_windowIsDirty;
-		uint32_t				m_lastDrawnGraphsVersion;
+		std::vector<SDL_Point>		m_tempGraphPoints;
+		bool						m_windowIsDirty;
+		uint32_t					m_lastDrawnGraphsVersion;
+
+		SDL_Point					m_mousePosition;
+		bool						m_mouseIsInWindow;
 
 		void	_CreateStretchGraph(
 					const Graphs::Data*		aData,
@@ -43,7 +46,9 @@ namespace graphtail
 					uint32_t				aDataGroupWindowHeight,
 					uint32_t				aDataGroupY,
 					float					aValueMin,
-					float					aValueRange);
+					float					aValueRange,
+					float&					aOutCursorValue,
+					int&					aOutCursorX);
 		void	_CreateFixedXStepGraph(
 					const Graphs::Data*		aData,
 					int						aWindowWidth,
@@ -51,7 +56,9 @@ namespace graphtail
 					uint32_t				aDataGroupY,
 					float					aValueMin,
 					float					aValueRange,
-					uint32_t				aXStep);
+					uint32_t				aXStep,
+					float&					aOutCursorValue,
+					int&					aOutCursorX);
 		void	_DrawText(
 					int						aX,
 					int						aY,

@@ -61,7 +61,7 @@ namespace graphtail
 		struct DataGroup
 		{
 			DataGroup(
-				const Config::Group*										aConfig = NULL)
+				const Config::Group*										aConfig)
 				: m_config(aConfig)
 			{
 
@@ -140,6 +140,8 @@ namespace graphtail
 		
 		std::vector<std::unique_ptr<DataGroup>>	m_dataGroups;
 		std::unordered_map<std::string, Data*>	m_dataIndex;
+
+		Config::Group							m_defaultGroupConfig;
 
 		uint32_t								m_version;
 

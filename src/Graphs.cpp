@@ -10,6 +10,8 @@ namespace graphtail
 		: m_config(aConfig)
 		, m_version(0)
 	{
+		m_defaultGroupConfig.m_config.ApplyDefaults(m_config->m_defaultGroupConfig);
+
 		// Initialize groups
 		for(const std::unique_ptr<Config::Group>& configGroup : aConfig->m_groups)
 			m_dataGroups.push_back(std::make_unique<DataGroup>(configGroup.get()));
@@ -93,7 +95,7 @@ namespace graphtail
 	Graphs::DataGroup*
 	Graphs::_CreateDataGroup()
 	{
-		m_dataGroups.push_back(std::make_unique<DataGroup>());
+		m_dataGroups.push_back(std::make_unique<DataGroup>(&m_defaultGroupConfig));
 		return m_dataGroups[m_dataGroups.size() - 1].get();
 	}
 

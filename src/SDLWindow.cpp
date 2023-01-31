@@ -51,6 +51,7 @@ namespace graphtail
 		: m_config(aConfig)
 		, m_lastDrawnGraphsVersion(0)
 		, m_windowIsDirty(true)
+		, m_mouseIsInWindow(false)
 	{
 		{
 			int result = SDL_Init(SDL_INIT_VIDEO);
@@ -117,8 +118,8 @@ namespace graphtail
 			case SDL_QUIT:	
 				return false;
 
-			case SDL_DISPLAYEVENT:
 			case SDL_WINDOWEVENT:
+			case SDL_DISPLAYEVENT:
 			case SDL_RENDER_TARGETS_RESET:
 			case SDL_RENDER_DEVICE_RESET:
 				m_windowIsDirty = true;
@@ -126,6 +127,39 @@ namespace graphtail
 
 			default:
 				break;
+			}
+		}
+		
+		// Mouse position
+		{
+			SDL_Point mouse;
+			SDL_GetGlobalMouseState(&mouse.x, &mouse.y);
+
+			int windowX;
+			int windowY;
+			SDL_GetWindowPosition(m_window, &windowX, &windowY);
+
+			mouse.x -= windowX;
+			mouse.y -= windowY;
+
+			int windowWidth;
+			int windowHeight;
+			SDL_GetWindowSize(m_window, &windowWidth, &windowHeight);
+
+			bool mouseIsInWindow = mouse.x >= 0 && mouse.y >= 0 && mouse.x < windowWidth&& mouse.y < windowHeight;
+
+			if(mouseIsInWindow != m_mouseIsInWindow)
+			{
+				m_windowIsDirty = true;
+
+				m_mouseIsInWindow = mouseIsInWindow;
+			}
+
+			if(mouse.x != m_mousePosition.x || mouse.y != m_mousePosition.y)
+			{
+				m_windowIsDirty = true;
+
+				m_mousePosition = mouse;
 			}
 		}
 
@@ -160,20 +194,24 @@ namespace graphtail
 			size_t colorIndex = 0;
 
 			for(const std::unique_ptr<Graphs::DataGroup>& dataGroup : dataGroups)
-			{			
+			{		
+				bool mouseCursorInDataGroup = m_mouseIsInWindow && m_mousePosition.y >= (int)dataGroupY && (int)m_mousePosition.y < (int)dataGroupY + (int)dataGroupWindowHeight;
+
 				{
-					if(alternatingBackground)
+					SDL_Rect rect;
+					rect.x = 0;
+					rect.y = (int)dataGroupY;
+					rect.w = windowWidth;
+					rect.h = (int)dataGroupWindowHeight + 1; 
+					SDL_RenderSetClipRect(m_renderer, &rect);
+
+					if (alternatingBackground)
 						SDL_SetRenderDrawColor(m_renderer, 16, 16, 16, 255);
 					else
 						SDL_SetRenderDrawColor(m_renderer, 24, 24, 24, 255);
 
 					alternatingBackground = !alternatingBackground;
 
-					SDL_Rect rect;
-					rect.x = 0;
-					rect.y = (int)dataGroupY + 1;
-					rect.w = windowWidth;
-					rect.h = (int)dataGroupWindowHeight;
 					SDL_RenderFillRect(m_renderer, &rect);
 				}
 
@@ -193,36 +231,55 @@ namespace graphtail
 
 						const Config::Color& color = m_config->m_graphColors[colorIndex % m_config->m_graphColors.size()];
 
-						char infoBuffer[256];
-						if(data->m_values.size() > 0)
+						// Graph
+						int cursorX = 0;
+						float cursorValue = 0.0f;
+
+						if(valueRange > 0)
 						{
-							snprintf(infoBuffer, sizeof(infoBuffer), " avg:%s min:%s max:%s", 
+							m_tempGraphPoints.clear();
+
+							if(dataGroup->m_config != NULL && dataGroup->m_config->m_config.m_xStep.has_value())
+								_CreateFixedXStepGraph(data.get(), windowWidth, dataGroupWindowHeight, dataGroupY, valueMin, valueRange, dataGroup->m_config->m_config.m_xStep.value(), cursorValue, cursorX);
+							else
+								_CreateStretchGraph(data.get(), windowWidth, dataGroupWindowHeight, dataGroupY, valueMin, valueRange, cursorValue, cursorX);
+
+							if(mouseCursorInDataGroup)
+							{
+								SDL_SetRenderDrawColor(m_renderer, 128, 128, 128, 255);
+								SDL_RenderDrawLine(m_renderer, cursorX, (int)dataGroupY, cursorX, (int)dataGroupY + (int)dataGroupWindowHeight);
+							}
+
+							SDL_SetRenderDrawColor(m_renderer, (uint8_t)color.m_r, (uint8_t)color.m_g, (uint8_t)color.m_b, 255);
+							SDL_RenderDrawLines(m_renderer, &m_tempGraphPoints[0], (int)m_tempGraphPoints.size());
+						}
+
+						// Text
+						char infoBuffer[256];
+						if (data->m_values.size() > 0)
+						{
+							char cursorValueBuffer[256];
+							if(mouseCursorInDataGroup)
+								snprintf(cursorValueBuffer, sizeof(cursorValueBuffer), " cursor:%s", FloatToString(cursorValue).c_str());
+							else
+								cursorValueBuffer[0] = '\0';
+
+							snprintf(infoBuffer, sizeof(infoBuffer), " avg:%s min:%s max:%s%s",
 								FloatToString(data->m_sum / (float)data->m_values.size()).c_str(),
 								FloatToString(data->m_min).c_str(),
-								FloatToString(data->m_max).c_str());
+								FloatToString(data->m_max).c_str(),
+								cursorValueBuffer);
 						}
 						else
 						{
 							infoBuffer[0] = '\0';
 						}
 
-						_DrawText(0, textY, SDL_Color{ (uint8_t)color.m_r, (uint8_t)color.m_g, (uint8_t)color.m_b, 255 }, "%s%s", 
-							data->m_id.c_str(), 
+						_DrawText(0, textY, SDL_Color{ (uint8_t)color.m_r, (uint8_t)color.m_g, (uint8_t)color.m_b, 255 }, "%s%s",
+							data->m_id.c_str(),
 							infoBuffer);
 
-						SDL_SetRenderDrawColor(m_renderer, (uint8_t)color.m_r, (uint8_t)color.m_g, (uint8_t)color.m_b, 255);
-
-						if(valueRange > 0)
-						{
-							m_tempGraphPoints.clear();
-
-							if(dataGroup->m_config->m_config.m_xStep.has_value())
-								_CreateFixedXStepGraph(data.get(), windowWidth, dataGroupWindowHeight, dataGroupY, valueMin, valueRange, dataGroup->m_config->m_config.m_xStep.value());
-							else
-								_CreateStretchGraph(data.get(), windowWidth, dataGroupWindowHeight, dataGroupY, valueMin, valueRange);
-
-							SDL_RenderDrawLines(m_renderer, &m_tempGraphPoints[0], (int)m_tempGraphPoints.size());
-						}
+						colorIndex++;
 
 						textY += 20;
 					}
@@ -232,17 +289,20 @@ namespace graphtail
 					const Config::Color& color = m_config->m_graphColors[colorIndex % m_config->m_graphColors.size()];
 
 					_DrawText(0, textY, SDL_Color{ (uint8_t)color.m_r, (uint8_t)color.m_g, (uint8_t)color.m_b, 255 }, "No data to show.");
+
+					colorIndex++;
 				}
 
 				dataGroupY += dataGroupWindowHeight;
-
-				colorIndex++;
 			}
+
+			SDL_RenderSetClipRect(m_renderer, NULL);
 		}
 		else
 		{
 			SDL_SetRenderDrawColor(m_renderer, 32, 32, 32, 255);
 			SDL_RenderClear(m_renderer);
+
 			_DrawText(0, 0, SDL_Color{ 255, 255, 255, 255 }, "No data to show.");
 		}
 
@@ -258,14 +318,22 @@ namespace graphtail
 		uint32_t				aDataGroupWindowHeight,
 		uint32_t				aDataGroupY,
 		float					aValueMin,
-		float					aValueRange)
+		float					aValueRange,
+		float&					aOutCursorValue,
+		int&					aOutCursorX)
 	{
-		if (aData->m_values.size() < (size_t)aWindowWidth)
+		if (aData->m_values.size() < (size_t)aWindowWidth && aData->m_values.size() > 1)
 		{
 			for (size_t i = 0; i < aData->m_values.size(); i++)
 			{
 				int x = ((int)i * aWindowWidth) / (int)(aData->m_values.size() - 1);
 				int y = (int)aDataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)aDataGroupWindowHeight) + (int)aDataGroupY;
+
+				if(x <= m_mousePosition.x + ((int)aWindowWidth / (int)aData->m_values.size()) / 2)
+				{
+					aOutCursorX = x;
+					aOutCursorValue = aData->m_values[i];
+				}
 
 				m_tempGraphPoints.push_back({ x, y });
 			}
@@ -277,6 +345,12 @@ namespace graphtail
 				size_t i = ((size_t)x * aData->m_values.size()) / (size_t)aWindowWidth;
 				GRAPHTAIL_ASSERT(i < aData->m_values.size());
 				int y = (int)aDataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)aDataGroupWindowHeight) + (int)aDataGroupY;
+
+				if (x <= m_mousePosition.x)
+				{
+					aOutCursorX = x;
+					aOutCursorValue = aData->m_values[i];
+				}
 
 				m_tempGraphPoints.push_back({ x, y });
 			}
@@ -292,7 +366,9 @@ namespace graphtail
 		uint32_t				aDataGroupY,
 		float					aValueMin,
 		float					aValueRange,
-		uint32_t				aXStep)
+		uint32_t				aXStep,
+		float&					aOutCursorValue,
+		int&					aOutCursorX)
 	{
 		size_t iMin = 0;
 		size_t iMax = aData->m_values.size() - 1;
@@ -306,6 +382,13 @@ namespace graphtail
 		{
 			GRAPHTAIL_ASSERT(i < aData->m_values.size());
 			int y = (int)aDataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)aDataGroupWindowHeight) + (int)aDataGroupY;
+
+			if (x < m_mousePosition.x + (int)aXStep / 2)
+			{
+				aOutCursorX = x;
+				aOutCursorValue = aData->m_values[i];
+			}
+
 			m_tempGraphPoints.push_back({ x, y });
 			x += (int)aXStep;
 		}
