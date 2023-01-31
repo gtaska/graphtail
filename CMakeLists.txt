@@ -16,19 +16,17 @@ endmacro()
 
 if(MSVC)
 	set(GRAPHTAIL_FORCE_USE_SYSTEM_SDL_DEFAULT OFF)
-	set(GRAPHTAIL_FORCE_USE_SYSTEM_SDL_TTF_DEFAULT OFF)
 else()
 	set(GRAPHTAIL_FORCE_USE_SYSTEM_SDL_DEFAULT ON)
-	set(GRAPHTAIL_FORCE_USE_SYSTEM_SDL_TTF_DEFAULT ON)
 endif()
 
 graphtail_option(GRAPHTAIL_FORCE_USE_SYSTEM_SDL "Force use system SDL." ${GRAPHTAIL_FORCE_USE_SYSTEM_SDL_DEFAULT})
-graphtail_option(GRAPHTAIL_FORCE_USE_SYSTEM_SDL_TTF "Force use system SDL_ttf." ${GRAPHTAIL_FORCE_USE_SYSTEM_SDL_TTF_DEFAULT})
 	
 set(BUILD_SHARED_LIBS OFF)
 
 include(FetchContent)
 
+# ------ brotli ------
 set(BROTLI_DISABLE_TESTS ON)
 set(BROTLI_BUNDLED_MODE ON)
 
@@ -40,6 +38,7 @@ FetchContent_MakeAvailable(brotli)
 
 set(BROTLI_LIBRARIES_STATIC brotlidec-static)
 
+# ------ SDL2 ------
 if(GRAPHTAIL_FORCE_USE_SYSTEM_SDL)
 	find_package(SDL2 REQUIRED)
 else()
@@ -57,22 +56,20 @@ else()
 	set(SDL2_LIBRARIES SDL2-static SDL2main)
 endif()
 
-if(GRAPHTAIL_FORCE_USE_SYSTEM_SDL_TTF)		
-	find_package(SDL2_ttf REQUIRED)
-else()
-	set(SDL2TTF_SAMPLES OFF)
-	set(SDL2TTF_BUILD_SHARED_LIBS OFF)
+# ------ SDL2_ttf ------
+set(SDL2TTF_SAMPLES OFF)
+set(SDL2TTF_BUILD_SHARED_LIBS OFF)
 
-	FetchContent_Declare(
-		SDL_ttf
-		GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf
-		GIT_TAG release-2.20.1)			
-	FetchContent_MakeAvailable(SDL_ttf)
-	
-	set(SDL2_TTF_INCLUDE_DIRS "${SDL2_ttf_SOURCE_DIR}/include")
-	set(SDL2_TTF_LIBRARIES SDL2_ttf)
-endif()
+FetchContent_Declare(
+	SDL_ttf
+	GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf
+	GIT_TAG release-2.20.1)			
+FetchContent_MakeAvailable(SDL_ttf)
 
+set(SDL2_TTF_INCLUDE_DIRS "${SDL2_ttf_SOURCE_DIR}/include")
+set(SDL2_TTF_LIBRARIES SDL2_ttf)
+
+# ------ Compile options ------
 if (MSVC)
     # warning level 4 and all warnings as errors
     add_compile_options(/W4 /WX /wd4996)
