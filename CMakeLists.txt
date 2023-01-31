@@ -40,7 +40,7 @@ set(BROTLI_LIBRARIES_STATIC brotlidec-static)
 
 # ------ SDL2 ------
 if(GRAPHTAIL_FORCE_USE_SYSTEM_SDL)
-	find_package(SDL2 REQUIRED)
+	find_package(SDL REQUIRED)
 else()
 	set(SDL_TEST OFF)
 	set(SDL_SHARED OFF)
@@ -52,8 +52,8 @@ else()
 		GIT_TAG release-2.0.22)
 	FetchContent_MakeAvailable(SDL2)
 	
-	set(SDL2_INCLUDE_DIRS "${SDL2_SOURCE_DIR}/include")
-	set(SDL2_LIBRARIES SDL2-static SDL2main)
+	set(SDL_INCLUDE_DIRS "${SDL2_SOURCE_DIR}/include")
+	set(SDL_LIBRARIES SDL2-static SDL2main)
 endif()
 
 # ------ SDL2_ttf ------
@@ -66,8 +66,8 @@ FetchContent_Declare(
 	GIT_TAG release-2.20.1)			
 FetchContent_MakeAvailable(SDL_ttf)
 
-set(SDL2_TTF_INCLUDE_DIRS "${SDL2_ttf_SOURCE_DIR}/include")
-set(SDL2_TTF_LIBRARIES SDL2_ttf)
+set(SDL_TTF_INCLUDE_DIRS "${SDL2_ttf_SOURCE_DIR}/include")
+set(SDL_TTF_LIBRARIES SDL2_ttf)
 
 # ------ Compile options ------
 if (MSVC)
