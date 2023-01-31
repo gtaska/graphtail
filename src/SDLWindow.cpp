@@ -49,6 +49,8 @@ namespace graphtail
 	SDLWindow::SDLWindow(
 		Config*			aConfig)
 		: m_config(aConfig)
+		, m_lastDrawnGraphsVersion(0)
+		, m_windowIsDirty(true)
 	{
 		{
 			int result = SDL_Init(SDL_INIT_VIDEO);
@@ -86,7 +88,7 @@ namespace graphtail
 		m_fontDataRW = SDL_RWFromConstMem(m_fontData.GetData(), (int)m_fontData.GetSize());
 		GRAPHTAIL_ASSERT(m_fontDataRW != NULL);
 
-		m_font = TTF_OpenFontRW(m_fontDataRW, SDL_TRUE, 16);
+		m_font = TTF_OpenFontRW(m_fontDataRW, SDL_TRUE, (int)m_config->m_fontSize);
 		GRAPHTAIL_CHECK(m_font != NULL, "TTF_OpenFontRW() failed: %s", TTF_GetError());
 	}
 	
@@ -115,6 +117,13 @@ namespace graphtail
 			case SDL_QUIT:	
 				return false;
 
+			case SDL_DISPLAYEVENT:
+			case SDL_WINDOWEVENT:
+			case SDL_RENDER_TARGETS_RESET:
+			case SDL_RENDER_DEVICE_RESET:
+				m_windowIsDirty = true;
+				break;
+
 			default:
 				break;
 			}
@@ -127,6 +136,12 @@ namespace graphtail
 	SDLWindow::DrawGraphs(
 		const Graphs&	aGraphs)
 	{
+		if(!m_windowIsDirty && m_lastDrawnGraphsVersion == aGraphs.GetVersion())
+			return;
+
+		m_lastDrawnGraphsVersion = aGraphs.GetVersion();
+		m_windowIsDirty = false;
+
 		int windowWidth;
 		int windowHeight;
 		SDL_GetWindowSize(m_window, &windowWidth, &windowHeight);
@@ -244,11 +259,7 @@ namespace graphtail
 			SDL_RenderClear(m_renderer);
 			_DrawText(0, 0, SDL_Color{ 255, 255, 255, 255 }, "No data to show.");
 		}
-	}
 
-	void	
-	SDLWindow::Present()
-	{
 		SDL_RenderPresent(m_renderer);
 	}
 

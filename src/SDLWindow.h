@@ -22,7 +22,6 @@ namespace graphtail
 		bool	Update();
 		void	DrawGraphs(
 					const Graphs&		aGraphs);
-		void	Present();
 
 	private:
 
@@ -36,6 +35,8 @@ namespace graphtail
 		SDL_RWops*				m_fontDataRW;
 
 		std::vector<SDL_Point>	m_tempGraphPoints;
+		bool					m_windowIsDirty;
+		uint32_t				m_lastDrawnGraphsVersion;
 
 		void	_DrawText(
 					int					aX,

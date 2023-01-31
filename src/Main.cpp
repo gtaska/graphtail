@@ -25,8 +25,6 @@ main(
 			csvTail->Update();
 
 		window.DrawGraphs(graphs);
-		
-		window.Present();
 
 		SDL_Delay(30);
 	}

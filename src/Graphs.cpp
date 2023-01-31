@@ -8,6 +8,7 @@ namespace graphtail
 	Graphs::Graphs(
 		const Config*		aConfig)
 		: m_config(aConfig)
+		, m_version(0)
 	{
 		// Initialize groups
 		for(const std::unique_ptr<Config::Group>& configGroup : aConfig->m_groups)
@@ -26,6 +27,8 @@ namespace graphtail
 		const char*			aId) 
 	{
 		_GetData(aId)->Reset();
+
+		m_version++;
 	}
 	
 	void	
@@ -34,6 +37,8 @@ namespace graphtail
 		float				aValue) 
 	{
 		_GetData(aId)->AddValue(aValue);
+
+		m_version++;
 	}
 
 	//-------------------------------------------------------------------------------------

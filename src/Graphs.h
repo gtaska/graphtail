@@ -94,12 +94,16 @@ namespace graphtail
 
 		// Data access
 		const std::vector<std::unique_ptr<DataGroup>>&	GetDataGroups() const { return m_dataGroups; }
+		uint32_t										GetVersion() const { return m_version; }
+
 	private:
 
 		const Config*							m_config;
 		
 		std::vector<std::unique_ptr<DataGroup>>	m_dataGroups;
 		std::unordered_map<std::string, Data*>	m_dataIndex;
+
+		uint32_t								m_version;
 
 		Data*											_GetData(
 															const char*		aId);

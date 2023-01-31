@@ -394,6 +394,8 @@ namespace graphtail
 				m_width = _ParseUInt(value.c_str());
 			else if (arg == "height")
 				m_height = _ParseUInt(value.c_str());
+			else if (arg == "font_size")
+				m_fontSize = _ParseUInt(value.c_str());
 			else if(arg == "groups")
 				_ParseGroups(value.c_str(), m_groups);
 			else

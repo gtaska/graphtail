@@ -31,6 +31,7 @@ namespace graphtail
 		uint32_t									m_width = 1000;
 		uint32_t									m_height = 500;
 		std::vector<std::unique_ptr<Group>>			m_groups;
+		uint32_t									m_fontSize = 14;
 
 		std::vector<Color>							m_graphColors = 
 		{ 
