@@ -40,7 +40,7 @@ set(BROTLI_LIBRARIES_STATIC brotlidec-static)
 
 # ------ SDL2 ------
 if(GRAPHTAIL_FORCE_USE_SYSTEM_SDL)
-	find_package(SDL REQUIRED)
+	find_package(SDL2 REQUIRED)
 else()
 	set(SDL_TEST OFF)
 	set(SDL_SHARED OFF)
