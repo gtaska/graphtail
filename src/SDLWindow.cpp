@@ -55,8 +55,19 @@ namespace graphtail
 			GRAPHTAIL_CHECK(result == 0, "SDL_Init() failed: %s", SDL_GetError());
 		}
 
+		std::string windowTitle;
+
+		{
+			std::stringstream s;
+			s << "graphtail";
+			for(const std::string& input : aConfig->m_inputs)
+				s << " - " << input;
+
+			windowTitle = s.str();
+		}
+
 		m_window = SDL_CreateWindow(
-			"graphtail",
+			windowTitle.c_str(),
 			SDL_WINDOWPOS_UNDEFINED,
 			SDL_WINDOWPOS_UNDEFINED,
 			(int)m_config->m_width,
@@ -137,9 +148,9 @@ namespace graphtail
 			{			
 				{
 					if(alternatingBackground)
-						SDL_SetRenderDrawColor(m_renderer, 32, 32, 32, 255);
+						SDL_SetRenderDrawColor(m_renderer, 16, 16, 16, 255);
 					else
-						SDL_SetRenderDrawColor(m_renderer, 42, 42, 42, 255);
+						SDL_SetRenderDrawColor(m_renderer, 24, 24, 24, 255);
 
 					alternatingBackground = !alternatingBackground;
 

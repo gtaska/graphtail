@@ -34,7 +34,7 @@ namespace graphtail
 		if(m_fd == -1 && m_timer.HasExpired())
 			_OpenFile();
 
-		if(m_fd != 0)
+		if(m_fd != -1)
 			_ReadFile();
 	}
 
@@ -189,7 +189,7 @@ namespace graphtail
 	{
 		if(m_lastWarningMessage != aMessage)
 		{
-			fprintf(stderr, "%s: %s", m_path.c_str(), aMessage);
+			fprintf(stderr, "%s: %s\n", m_path.c_str(), aMessage);
 
 			m_lastWarningMessage = aMessage;
 		}
