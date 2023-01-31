@@ -15,38 +15,30 @@ macro(graphtail_option OPTION_NAME OPTION_TEXT OPTION_DEFAULT)
 endmacro()
 
 if(MSVC)
-	set(GRAPHTAIL_FORCE_USE_SYSTEM_BROTLI_DEFAULT OFF)
 	set(GRAPHTAIL_FORCE_USE_SYSTEM_SDL_DEFAULT OFF)
 	set(GRAPHTAIL_FORCE_USE_SYSTEM_SDL_TTF_DEFAULT OFF)
 else()
-	set(GRAPHTAIL_FORCE_USE_SYSTEM_BROTLI_DEFAULT ON)
 	set(GRAPHTAIL_FORCE_USE_SYSTEM_SDL_DEFAULT ON)
 	set(GRAPHTAIL_FORCE_USE_SYSTEM_SDL_TTF_DEFAULT ON)
 endif()
 
-graphtail_option(GRAPHTAIL_FORCE_USE_SYSTEM_BROTLI "Force use system brotli." ${GRAPHTAIL_FORCE_USE_SYSTEM_BROTLI_DEFAULT})
 graphtail_option(GRAPHTAIL_FORCE_USE_SYSTEM_SDL "Force use system SDL." ${GRAPHTAIL_FORCE_USE_SYSTEM_SDL_DEFAULT})
 graphtail_option(GRAPHTAIL_FORCE_USE_SYSTEM_SDL_TTF "Force use system SDL_ttf." ${GRAPHTAIL_FORCE_USE_SYSTEM_SDL_TTF_DEFAULT})
-
-#set(CMAKE_MODULE_PATH
-#	"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
-#	${CMAKE_MODULE_PATH})
 	
 set(BUILD_SHARED_LIBS OFF)
 
 include(FetchContent)
 
-if(GRAPHTAIL_FORCE_USE_SYSTEM_SDL)
-	find_package(brotli REQUIRED)
-else()
-	set(BROTLI_DISABLE_TESTS ON)
-	
-	FetchContent_Declare(
-		brotli
-		GIT_REPOSITORY https://github.com/google/brotli
-		GIT_TAG v1.0.9)
-	FetchContent_MakeAvailable(brotli)	
-endif()
+set(BROTLI_DISABLE_TESTS ON)
+set(BROTLI_BUNDLED_MODE ON)
+
+FetchContent_Declare(
+	brotli
+	GIT_REPOSITORY https://github.com/google/brotli
+	GIT_TAG v1.0.9)
+FetchContent_MakeAvailable(brotli)	
+
+set(BROTLI_LIBRARIES_STATIC brotlidec-static)
 
 if(GRAPHTAIL_FORCE_USE_SYSTEM_SDL)
 	find_package(SDL2 REQUIRED)
@@ -60,6 +52,9 @@ else()
 		GIT_REPOSITORY https://github.com/libsdl-org/SDL
 		GIT_TAG release-2.0.22)
 	FetchContent_MakeAvailable(SDL2)
+	
+	set(SDL2_INCLUDE_DIRS "${SDL2_SOURCE_DIR}/include")
+	set(SDL2_LIBRARIES SDL2-static SDL2main)
 endif()
 
 if(GRAPHTAIL_FORCE_USE_SYSTEM_SDL_TTF)		
@@ -73,6 +68,9 @@ else()
 		GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf
 		GIT_TAG release-2.20.1)			
 	FetchContent_MakeAvailable(SDL_ttf)
+	
+	set(SDL_TTF_INCLUDE_DIRS "${SDL2_ttf_SOURCE_DIR}/include")
+	set(SDL_TTF_LIBRARIES SDL2_ttf)
 endif()
 
 if (MSVC)
