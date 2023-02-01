@@ -266,7 +266,7 @@ namespace graphtail
 						char infoBuffer[256];
 						if (data->m_values.size() > 0)
 						{
-							char cursorValueBuffer[256];
+							char cursorValueBuffer[128];
 							if(mouseCursorInDataGroup)
 								snprintf(cursorValueBuffer, sizeof(cursorValueBuffer), " cursor:%s", FloatToString(cursorValue).c_str());
 							else
