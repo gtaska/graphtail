@@ -19,6 +19,7 @@ namespace graphtail
 		, m_parseBufferBytes(0)
 		, m_currentColumnIndex(0)
 		, m_hasHeaders(false)
+		, m_lineNum(0)
 	{
 		GRAPHTAIL_ASSERT(m_listener != NULL);
 	}
@@ -58,6 +59,8 @@ namespace graphtail
 		{
 			m_fileSize = 0;
 		}
+
+		m_lineNum = 1;
 	}
 	
 	void				
@@ -124,6 +127,9 @@ namespace graphtail
 		{
 			char c = aBuffer[i];
 
+			if(c == '\n')
+				m_lineNum++;
+
 			if(c == m_config->m_columnDelimiter)
 			{
 				_ParseBufferFlushColumn();
@@ -173,12 +179,20 @@ namespace graphtail
 	float
 	CSVTail::_ParseBufferFloat()
 	{
-		// Make sure number is represented in the default C locale
-		for(size_t i = 0; i < m_parseBufferBytes; i++)
+		// Make sure number is represented in the default C locale - and also see if this is a valid number
+		bool notNumber = false;
+		for (size_t i = 0; i < m_parseBufferBytes; i++)
 		{
 			if(m_parseBuffer[i] == ',')
 				m_parseBuffer[i] = '.';
+
+			char c = m_parseBuffer[i];
+			if(c != '.' && !(c >= '0' && c <='9'))
+				notNumber = true;
 		}
+
+		if(notNumber || m_parseBufferBytes == 0)
+			_Warning("Non-numeric data encountered.");
 		
 		return (float)atof(m_parseBuffer);
 	}
@@ -189,7 +203,7 @@ namespace graphtail
 	{
 		if(m_lastWarningMessage != aMessage)
 		{
-			fprintf(stderr, "%s: %s\n", m_path.c_str(), aMessage);
+			fprintf(stderr, "%s (line %u): %s\n", m_path.c_str(), m_lineNum, aMessage);
 
 			m_lastWarningMessage = aMessage;
 		}

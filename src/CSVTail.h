@@ -48,6 +48,8 @@ namespace graphtail
 		char						m_parseBuffer[256];
 		size_t						m_parseBufferBytes;
 
+		uint32_t					m_lineNum;
+
 		void				_OpenFile();
 		void				_ReadFile();
 		void				_ParseBuffer(
