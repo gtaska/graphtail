@@ -18,5 +18,64 @@ cd build
 cmake ..
 cmake --build .
 ```
-On Windows, if successful, you'll find ```graphtail.exe``` in ```src\Release```.
+On Windows, if successful, you'll find ```graphtail.exe``` in ```src\Debug```.
 On Linux (and similar), if successful, you can run ```make install``` to install ```graphtail```.
+
+### Downloading binaries
+For Windows you can download the zip'd .exe file available under "Releases".
+
+## Usage
+```
+graphtail [options] <input files>
+```
+Renders numeric data from input CSV files into a window. Any changes to the files will automatically update the window.
+
+Option|Description
+-|-
+```--row_delim=<character>```| Character used as row deliminator in CSV files or 'new_line'. Defaults to 'new_line'.
+```--column_delim=<character>```| Character used as column deliminator in CSV files. Defaults to ';'.
+```--width=<width>```<br>```--height=<height>```| Sets the size of the window. Defaults to a 1000x500.
+```--font_size=<size>```| Sets the size of the font used to display information. Defaults to 14.
+```--x_step=<pixels>```| Instead of stretching graph to fit the width of the window, each data point will advance <pixels> on the x-axis. This option can be used in a group definition.
+```--y_min=<min>```<br>```--y_max=<min>```| Clamp the graph y-axis to the specified range. Default is to stretch. This option can be used in a group definition.
+```--groups=<definition>```| Defines graph groups. See example below. If no groups are defined, all columns will get their own group automatically.
+```--config=<path>```| Loads configuration from specified file. See below for an example of a configuration file.
+
+## Group definitions
+All graphs will be shown separately per default, but you can group specific ones together if you want to with the ```--groups``` option.
+
+Group description syntax looks a bit wonky because it's easy to parse, but it's quite simple:
+
+```{``` marks the beginning of a group and it's ended with ```}```. Inside the brackets you can use ```i(column)``` to added ```column``` to the group. ```column``` can also be a wildcard (for example ```*something*```), which will cause any column with a name matching the wildcard to be added to the group. Inside the group you can also specify group-specific parameters with ```!option=value```. You can see which options can be specified per group in the list above.
+
+Example group definition:
+
+```
+--groups={i(foo)i(bar)!y_min=0!y_max=1}{i(baz)}
+```
+
+This will cause the columns ```foo``` and ```bar``` to be added to the same group and the y-axis will be clamped between 0 and 1. The column ```baz``` will be put in a separate group.
+  
+## Configuration files
+A configuration file is a list of statements:
+
+```
+input /path/to/some/csv-file
+width 500
+height 500
+groups {i(foo)i(bar)}
+```
+
+Alternatively you can specify values like this:
+
+```
+begin groups
+  {
+    i(foo)
+    i(bar)
+  }
+end
+```
+  
+This is particularily useful if you have a lot of groups and you want your configuration to be more readable.
+
