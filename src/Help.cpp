@@ -39,7 +39,7 @@ namespace graphtail
 			"Clamp the graph y-axis to the specified range. Default is to stretch."
 		});
 
-		_DefineEntry(false, { "groups=<group definition>" },
+		_DefineEntry(false, { "groups=<definition>" },
 		{
 			"Defines graph groups. See example below. If no groups are defined,",
 			"all columns will get their own group automatically."
@@ -84,6 +84,13 @@ namespace graphtail
 				_PrintIndent();
 				_PrintIndent();
 				printf("%s\n", line.c_str());
+			}
+
+			if (t->m_group)
+			{
+				_PrintIndent();
+				_PrintIndent();
+				printf("This option can be used in a group definition.\n");
 			}
 		}
 
@@ -130,6 +137,32 @@ namespace graphtail
 			"    This is particularily useful if you have a lot of groups and you want\n"
 			"    your configuration to be more readable.\n"
 		);
+	}
+
+	void	
+	Help::PrintMarkdown() const
+	{
+		printf("Option|Description\n-|-\n");
+		
+		for (const std::unique_ptr<Entry>& t : m_entries)
+		{
+			for(size_t i = 0; i < t->m_options.size(); i++)
+			{
+				if(i > 0)
+					printf("<br>");
+				printf("```--%s```", t->m_options[i].c_str());
+			}
+
+			printf("|");
+
+			for(const std::string& line : t->m_description)
+				printf(" %s", line.c_str());
+
+			if(t->m_group)
+				printf(" This option can be used in a group definition.");
+
+			printf("\n");
+		}
 	}
 
 	//---------------------------------------------------------------------------

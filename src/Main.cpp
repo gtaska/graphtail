@@ -18,7 +18,11 @@ main(
 		printf("graphtail " GRAPHTAIL_VERSION "\n");
 
 		graphtail::Help help;
-		help.PrintCommandLine();
+
+		if(config.m_showHelpMarkdown)
+			help.PrintMarkdown();
+		else
+			help.PrintCommandLine();
 		
 		return EXIT_SUCCESS;
 	}

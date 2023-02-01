@@ -473,6 +473,7 @@ namespace graphtail
 				else if (p.first == "help")
 				{
 					m_showHelp = true;
+					m_showHelpMarkdown = p.second == "markdown";
 					return;
 				}
 				else

@@ -16,6 +16,8 @@ macro(graphtail_option OPTION_NAME OPTION_TEXT OPTION_DEFAULT)
     message(STATUS "${OPTION_NAME}: ${${OPTION_NAME}}")
 endmacro()
 
+graphtail_option(GRAPHTAIL_PRECOMPILED_HEADERS "Enable precompiled headers." ON)
+
 set(BUILD_SHARED_LIBS OFF)
 
 include(FetchContent)

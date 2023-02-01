@@ -49,6 +49,7 @@ namespace graphtail
 		uint32_t									m_fontSize = 14;
 		GroupConfig									m_defaultGroupConfig;
 		bool										m_showHelp = false;
+		bool										m_showHelpMarkdown = false;
 
 		std::vector<Color>							m_graphColors = 
 		{ 

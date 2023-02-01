@@ -10,6 +10,7 @@ namespace graphtail
 				~Help();
 
 		void	PrintCommandLine() const;
+		void	PrintMarkdown() const;
 
 	private:
 
