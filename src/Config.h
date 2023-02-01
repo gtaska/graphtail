@@ -32,7 +32,7 @@ namespace graphtail
 		{
 			std::vector<std::unique_ptr<Wildcard>>	m_idWildcards;
 			GroupConfig								m_config;
-		};
+		};		
 
 					Config(
 						int						aNumArgs,
@@ -43,11 +43,12 @@ namespace graphtail
 		char										m_rowDelimiter = '\n';
 		char										m_columnDelimiter = ';';
 		std::vector<std::string>					m_inputs;
-		uint32_t									m_width = 320;
-		uint32_t									m_height = 250;
+		uint32_t									m_width = 1000;
+		uint32_t									m_height = 500;
 		std::vector<std::unique_ptr<Group>>			m_groups;
 		uint32_t									m_fontSize = 14;
 		GroupConfig									m_defaultGroupConfig;
+		bool										m_showHelp = false;
 
 		std::vector<Color>							m_graphColors = 
 		{ 

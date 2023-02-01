@@ -9,6 +9,7 @@ namespace
 {
 
 	// Brotli-compressed TTF font
+	// Hack Regular (Redux) from https://github.com/source-foundry/Hack
 	static const size_t FONT_DATA_COMPRESSED_SIZE = 14196;
 	static const size_t FONT_DATA_UNCOMPRESSED_SIZE = 38384;
 	static const uint32_t FONT_DATA[] = 
@@ -318,6 +319,13 @@ namespace graphtail
 
 	FontData::FontData()
 	{
+		// Verify we're little endian
+		{
+			uint32_t littleEndianTest = 1;
+			GRAPHTAIL_CHECK(((uint8_t*)&littleEndianTest)[0] == 1);
+		}
+
+		// Decompress TTF font
 		m_data = new uint8_t[FONT_DATA_UNCOMPRESSED_SIZE];
 		m_size = FONT_DATA_UNCOMPRESSED_SIZE;
 		BrotliDecoderResult result = BrotliDecoderDecompress(FONT_DATA_COMPRESSED_SIZE, (const uint8_t*)FONT_DATA, &m_size, m_data);		

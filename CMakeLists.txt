@@ -2,6 +2,8 @@ cmake_minimum_required (VERSION 3.19)
 
 project(graphtail)
 
+set(GRAPHTAIL_VERSION 1.0.0)
+
 macro(graphtail_option OPTION_NAME OPTION_TEXT OPTION_DEFAULT)
     option(${OPTION_NAME} ${OPTION_TEXT} ${OPTION_DEFAULT})
     if(DEFINED ENV{${OPTION_NAME}})

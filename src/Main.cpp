@@ -3,6 +3,7 @@
 #include "Config.h"
 #include "CSVTail.h"
 #include "Graphs.h"
+#include "Help.h"
 #include "SDLWindow.h"
 
 int
@@ -11,6 +12,16 @@ main(
 	char**	aArgs)
 {
 	graphtail::Config config(aNumArgs, aArgs);
+
+	if(config.m_showHelp)
+	{		
+		printf("graphtail " GRAPHTAIL_VERSION "\n");
+
+		graphtail::Help help;
+		help.PrintCommandLine();
+		
+		return EXIT_SUCCESS;
+	}
 	
 	graphtail::SDLWindow window(&config);
 	graphtail::Graphs graphs(&config);

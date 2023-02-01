@@ -125,6 +125,14 @@ namespace graphtail
 				m_windowIsDirty = true;
 				break;
 
+			case SDL_KEYDOWN:
+				switch(event.key.keysym.sym)
+				{
+				case SDLK_ESCAPE:	return false;
+				default:			break;
+				}
+				break;
+
 			default:
 				break;
 			}

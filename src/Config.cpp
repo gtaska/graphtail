@@ -447,6 +447,12 @@ namespace graphtail
 	{
 		std::unordered_map<std::string, std::string> configTable;
 
+		if(aNumArgs == 1)
+		{
+			m_showHelp = true;
+			return;
+		}
+
 		// Convert command line args into an unordered map
 		for (int i = 1; i < aNumArgs; i++)
 		{
@@ -460,10 +466,19 @@ namespace graphtail
 
 				std::pair<std::string, std::string> p = _ParseCommandLineArgument(arg);
 
-				if(p.first == "config")
+				if (p.first == "config")
+				{
 					_LoadConfig(p.second.c_str(), configTable, m_inputs);
+				}
+				else if (p.first == "help")
+				{
+					m_showHelp = true;
+					return;
+				}
 				else
+				{
 					configTable.insert(p);
+				}
 			}
 			else
 			{
