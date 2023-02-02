@@ -78,8 +78,8 @@ namespace
 		{
 			if(*p == '=')
 			{
-				GRAPHTAIL_CHECK(!equalSignOffset.has_value(), "Command-line argument syntax error: %s (multiple equal signs)", aArg);
-				equalSignOffset = length;
+				if(!equalSignOffset.has_value())
+					equalSignOffset = length;
 			}
 			length++;
 			p++;
