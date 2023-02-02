@@ -536,7 +536,7 @@ namespace graphtail
 		if(f < 0.0f)
 		{
 			const Config::Color& c = m_config->m_histogramColors[0];
-			return SDL_Color{ (uint8_t)c.m_r, (uint8_t)c.m_g, (uint8_t)c.m_b };
+			return SDL_Color{ (uint8_t)c.m_r, (uint8_t)c.m_g, (uint8_t)c.m_b, 255 };
 		}
 
 		float i = (float)(m_config->m_histogramColors.size() - 1) * f;
@@ -548,7 +548,7 @@ namespace graphtail
 		if(i1 >= m_config->m_histogramColors.size())
 		{
 			const Config::Color& c = m_config->m_histogramColors[m_config->m_histogramColors.size() - 1];
-			return SDL_Color{ (uint8_t)c.m_r, (uint8_t)c.m_g, (uint8_t)c.m_b };
+			return SDL_Color{ (uint8_t)c.m_r, (uint8_t)c.m_g, (uint8_t)c.m_b, 255 };
 		}
 
 		const Config::Color& c0 = m_config->m_histogramColors[i0];
