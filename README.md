@@ -47,7 +47,7 @@ All graphs will be shown separately per default, but you can group specific ones
 
 Group description syntax looks a bit wonky because it's easy to parse, but it's quite simple:
 
-```{``` marks the beginning of a group and it's ended with ```}```. Inside the brackets you can use ```i(column)``` to added ```column``` to the group. ```column``` can also be a wildcard (for example ```*something*```), which will cause any column with a name matching the wildcard to be added to the group. Inside the group you can also specify group-specific parameters with ```!option=value```. You can see which options can be specified per group in the list above.
+```{``` marks the beginning of a group and ```}``` ends it. Inside the brackets you can use ```i(column)``` to added ```column``` to the group. ```column``` can also be a wildcard (for example ```*something*```), which will cause any column with a name matching the wildcard to be added to the group. Inside the group you can also specify group-specific parameters with ```!option=value```. You can see which options can be specified per group in the list above.
 Use ```h(name)(column1, column2, ...)``` to turn the group into a histogram heatmap.
 
 ### Example 1
