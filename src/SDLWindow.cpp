@@ -244,7 +244,8 @@ namespace graphtail
 
 						int x = histogramWidth < windowWidth ? histogramWidth - xStep : windowWidth - xStep;
 
-						std::optional<float> cursorValue;
+						float cursorValue = 0.0f;
+						const char* cursorId = NULL;
 
 						for (size_t i = 0; i < histogramStepCount && x > -xStep; i++)
 						{
@@ -272,6 +273,7 @@ namespace graphtail
 									color.b = (uint8_t)std::min<uint32_t>(((uint32_t)color.b * 5) / 4, 255);
 
 									cursorValue = value;
+									cursorId = dataGroup->m_config->m_histogram->m_ids[j].c_str();
 								}
 
 								SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
@@ -282,8 +284,8 @@ namespace graphtail
 						}
 
 						char infoBuffer[256];
-						if(cursorValue.has_value())
-							snprintf(infoBuffer, sizeof(infoBuffer), " cursor:%s", FloatToString(cursorValue.value()).c_str());
+						if(cursorId != NULL)
+							snprintf(infoBuffer, sizeof(infoBuffer), " %s:%s", cursorId, FloatToString(cursorValue).c_str());
 						else
 							infoBuffer[0] = '\0';						
 
