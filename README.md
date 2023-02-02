@@ -52,6 +52,8 @@ Use ```h(name)(column1, column2, ...)``` to turn the group into a histogram heat
 
 ### Example 1
 
+![example1](https://user-images.githubusercontent.com/7039567/216309538-c6c89bf0-3584-4a7d-8733-97b90be9ba78.png)
+
 ```
 --groups={i(foo)i(bar)!y_min=0!y_max=1}{i(baz)}
 ```
@@ -59,6 +61,8 @@ Use ```h(name)(column1, column2, ...)``` to turn the group into a histogram heat
 This will cause the columns ```foo``` and ```bar``` to be added to the same group and the y-axis will be clamped between 0 and 1. The column ```baz``` will be put in a separate group.
 
 ### Example 2
+
+![example2](https://user-images.githubusercontent.com/7039567/216310991-768b63ec-21e5-449c-aba1-6d8f42171c67.png)
 
 ```
 --groups={h(foo)(foo1,foo2,foo3,foo4)!histogram_threshold=0}
