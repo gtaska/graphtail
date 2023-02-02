@@ -25,3 +25,11 @@
 		}
 
 #endif
+
+namespace graphtail::StringUtils
+{
+
+	std::string		FloatToString(
+						float			aValue);
+
+}

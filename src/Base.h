@@ -17,9 +17,13 @@
 #include <string.h>
 
 #include <chrono>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+#include <SDL.h>
+#include <SDL_ttf.h>

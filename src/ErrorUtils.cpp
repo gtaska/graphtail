@@ -1,8 +1,9 @@
+#include "Base.h"
+
 #if defined(_WIN32)
 	#include <windows.h>
 #endif
 
-#include "Base.h"
 #include "ErrorUtils.h"
 #include "StringUtils.h"
 

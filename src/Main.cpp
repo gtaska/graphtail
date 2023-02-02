@@ -4,7 +4,7 @@
 #include "CSVTail.h"
 #include "Graphs.h"
 #include "Help.h"
-#include "SDLWindow.h"
+#include "Window.h"
 
 int
 main(
@@ -27,7 +27,7 @@ main(
 		return EXIT_SUCCESS;
 	}
 	
-	graphtail::SDLWindow window(&config);
+	graphtail::Window window(&config);
 	graphtail::Graphs graphs(&config);
 
 	std::vector<std::unique_ptr<graphtail::CSVTail>> csvTails;
