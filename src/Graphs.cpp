@@ -14,7 +14,21 @@ namespace graphtail
 
 		// Initialize groups
 		for(const std::unique_ptr<Config::Group>& configGroup : aConfig->m_groups)
-			m_dataGroups.push_back(std::make_unique<DataGroup>(configGroup.get()));
+		{
+			std::unique_ptr<DataGroup> group = std::make_unique<DataGroup>(configGroup.get());
+
+			if(group->m_config->m_histogram)
+			{
+				std::unique_ptr<Data> histogram = std::make_unique<Data>();
+
+				for(const std::string& id : group->m_config->m_histogram->m_ids)
+					m_dataTable.insert(std::pair<std::string, Data*>(id, histogram.get()));
+
+				group->m_data.push_back(std::move(histogram));
+			}
+
+			m_dataGroups.push_back(std::move(group));
+		}
 	}
 	
 	Graphs::~Graphs()
@@ -28,7 +42,7 @@ namespace graphtail
 	Graphs::OnDataReset(
 		const char*			aId) 
 	{
-		_GetData(aId)->Reset();
+		_GetData(aId)->Reset();			
 
 		m_version++;
 	}
@@ -49,8 +63,8 @@ namespace graphtail
 	Graphs::_GetData(
 		const char*			aId)
 	{
-		std::unordered_map<std::string, Data*>::iterator i = m_dataIndex.find(aId);
-		if(i != m_dataIndex.end())
+		std::unordered_map<std::string, Data*>::iterator i = m_dataTable.find(aId);
+		if(i != m_dataTable.end())
 			return i->second;
 
 		Data* data = NULL;
@@ -87,7 +101,7 @@ namespace graphtail
 			data = dataGroup->CreateData(aId);
 		}
 
-		m_dataIndex[aId] = data;
+		m_dataTable[aId] = data;
 
 		return data;
 	}

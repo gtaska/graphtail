@@ -269,24 +269,94 @@ namespace
 	_ParseInput(
 		const char*												aString,
 		graphtail::Config::Group*								aGroup)
-	{
+	{		
 		size_t i = 0;
 		GRAPHTAIL_CHECK(aString[i++] == '(', "Unexpected '%c' in group input definition (expected '(').", aString[0]);
 		std::vector<char> value;
 
-		while (aString[i] != '\0')
+		for (;;)
 		{
 			char c = aString[i++];
-
+			GRAPHTAIL_CHECK(c != '\0', "Unexpected null-termination in group input definition.");
+			 
 			if(c == ')')
 				break;
 			else
 				value.push_back(c);
 		}
 
+		GRAPHTAIL_CHECK(value.size() > 0, "Group input definition is empty.");
 		value.push_back('\0');
 
 		aGroup->m_idWildcards.push_back(std::make_unique<graphtail::Wildcard>(&value[0]));
+
+		return i;
+	}
+
+	size_t
+	_ParseHistogram(
+		const char*												aString,
+		graphtail::Config::Group*								aGroup)
+	{
+		GRAPHTAIL_CHECK(!aGroup->m_histogram, "Histogram already defined for group.");
+		aGroup->m_histogram = std::make_unique<graphtail::Config::GroupHistogram>();
+
+		size_t i = 0;
+
+		// Description
+		{
+			GRAPHTAIL_CHECK(aString[i++] == '(', "Unexpected '%c' in group histogram definition (expected '(').", aString[0]);
+			std::vector<char> value;
+
+			for (;;)
+			{
+				char c = aString[i++];
+				GRAPHTAIL_CHECK(c != '\0', "Unexpected null-termination in group histogram definition.");
+
+				if (c == ')')
+				{
+					GRAPHTAIL_CHECK(value.size() > 0, "Group histogram description is empty.");
+					value.push_back('\0');
+					aGroup->m_histogram->m_name = &value[0];
+					break;
+				}
+				else
+				{
+					value.push_back(c);
+				}
+			}
+		}
+
+		// List of inputs
+		{
+			GRAPHTAIL_CHECK(aString[i++] == '(', "Unexpected '%c' in group histogram definition (expected '(').", aString[0]);
+			std::vector<char> value;
+
+			for (;;)
+			{
+				char c = aString[i++];
+				GRAPHTAIL_CHECK(c != '\0', "Unexpected null-termination in group histogram definition.");
+
+				if (c == ')')
+				{
+					GRAPHTAIL_CHECK(value.size() > 0, "Group histogram input definition is empty.");
+					value.push_back('\0');
+					aGroup->m_histogram->m_ids.push_back(&value[0]);
+					break;
+				}
+				else if (c == ',')
+				{
+					GRAPHTAIL_CHECK(value.size() > 0, "Group histogram input definition is empty.");
+					value.push_back('\0');
+					aGroup->m_histogram->m_ids.push_back(&value[0]);
+					value.clear();
+				}
+				else
+				{
+					value.push_back(c);
+				}
+			}
+		}
 
 		return i;
 	}
@@ -350,6 +420,8 @@ namespace
 				break;
 			else if(c == 'i')
 				i += _ParseInput(aString + i, group.get());
+			else if(c == 'h')
+				i += _ParseHistogram(aString + i, group.get());
 			else if(c == '!')
 				i += _ParseGroupParameter(aString + i, group.get());
 			else
@@ -421,6 +493,11 @@ namespace graphtail
 			m_yMax = _ParseFloat(aValue.c_str());
 			return true;
 		}
+		else if (aArg == "histogram_threshold")
+		{
+			m_histogramThreshold = _ParseFloat(aValue.c_str());
+			return true;
+		}
 
 		return false;
 	}
@@ -437,6 +514,9 @@ namespace graphtail
 
 		if (!m_yMax.has_value())
 			m_yMax = aDefaults.m_yMax;
+
+		if(!m_histogramThreshold.has_value())
+			m_histogramThreshold = aDefaults.m_histogramThreshold;
 	}
 
 	//------------------------------------------------------------------------------------

@@ -13,7 +13,7 @@ namespace graphtail
 		struct Data
 		{
 			Data(
-				const char*													aId)
+				const char*																	aId = "")
 				: m_id(aId)
 				, m_min(0)
 				, m_max(0)
@@ -33,7 +33,7 @@ namespace graphtail
 
 			void
 			AddValue(
-				float														aValue)
+				float																		aValue)
 			{
 				if(m_values.size() > 0)
 				{
@@ -61,15 +61,14 @@ namespace graphtail
 		struct DataGroup
 		{
 			DataGroup(
-				const Config::Group*										aConfig)
+				const Config::Group*														aConfig)
 				: m_config(aConfig)
 			{
-
 			}
 
 			Data*
 			CreateData(
-				const char*													aId)
+				const char*																	aId)
 			{
 				m_data.push_back(std::make_unique<Data>(aId));
 				return m_data[m_data.size() - 1].get();
@@ -115,20 +114,19 @@ namespace graphtail
 
 			// Public data
 			const Config::Group*				m_config;
-
 			std::vector<std::unique_ptr<Data>>	m_data;
 		};
 
 														Graphs(
-															const Config*	aConfig);
+															const Config*					aConfig);
 		virtual											~Graphs();
 
 		// CSVTail::IListener implementation
 		void											OnDataReset(
-															const char*		aId) override;
+															const char*						aId) override;
 		void											OnData(
-															const char*		aId,
-															float			aValue) override;
+															const char*						aId,
+															float							aValue) override;
 
 		// Data access
 		const std::vector<std::unique_ptr<DataGroup>>&	GetDataGroups() const { return m_dataGroups; }
@@ -136,17 +134,17 @@ namespace graphtail
 
 	private:
 
-		const Config*							m_config;
+		const Config*													m_config;
 		
-		std::vector<std::unique_ptr<DataGroup>>	m_dataGroups;
-		std::unordered_map<std::string, Data*>	m_dataIndex;
+		std::vector<std::unique_ptr<DataGroup>>							m_dataGroups;
+		std::unordered_map<std::string, Data*>							m_dataTable;
 
-		Config::Group							m_defaultGroupConfig;
+		Config::Group													m_defaultGroupConfig;
 
-		uint32_t								m_version;
+		uint32_t														m_version;
 
 		Data*											_GetData(
-															const char*		aId);
+															const char*						aId);
 		DataGroup*										_CreateDataGroup();
 	};
 

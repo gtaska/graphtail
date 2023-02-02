@@ -225,7 +225,78 @@ namespace graphtail
 
 				int textY = dataGroupY + 1;
 
-				if(dataGroup->m_data.size() > 0)
+				if(dataGroup->m_config->m_histogram)
+				{					
+					GRAPHTAIL_ASSERT(dataGroup->m_data.size() == 1);
+					const Graphs::Data* histogramData = dataGroup->m_data[0].get();
+					if(histogramData->m_values.size() > 0)
+					{
+						GRAPHTAIL_ASSERT(dataGroup->m_config->m_histogram->m_ids.size() > 0);
+						size_t histogramStepCount = histogramData->m_values.size() / dataGroup->m_config->m_histogram->m_ids.size();
+						if (histogramData->m_values.size() % dataGroup->m_config->m_histogram->m_ids.size())
+							histogramStepCount++;
+
+						int xStep = 15;
+						if (dataGroup->m_config->m_config.m_xStep.has_value())
+							xStep = (int)dataGroup->m_config->m_config.m_xStep.value();
+
+						int histogramWidth = (int)histogramStepCount * xStep;
+
+						int x = histogramWidth < windowWidth ? histogramWidth - xStep : windowWidth - xStep;
+
+						std::optional<float> cursorValue;
+
+						for (size_t i = 0; i < histogramStepCount && x > -xStep; i++)
+						{
+							size_t valueIndex = (histogramStepCount - i - 1) * dataGroup->m_config->m_histogram->m_ids.size();
+
+							for (size_t j = 0; j < dataGroup->m_config->m_histogram->m_ids.size() && valueIndex < histogramData->m_values.size(); j++)
+							{
+								float value = histogramData->m_values[valueIndex++];
+
+								if (dataGroup->m_config->m_config.m_histogramThreshold.has_value() && value <= dataGroup->m_config->m_config.m_histogramThreshold.value())
+									continue;
+
+								SDL_Rect rect;
+								rect.x = x;
+								rect.y = ((int)dataGroupWindowHeight * (int)j) / (int)dataGroup->m_config->m_histogram->m_ids.size();
+								rect.w = xStep;
+								rect.h = (int)dataGroupWindowHeight / (int)dataGroup->m_config->m_histogram->m_ids.size() + 1;
+
+								SDL_Color color = _GetHistogramColor(value, dataGroup->GetMin(), dataGroup->GetMax());
+
+								if (mouseCursorInDataGroup && m_mousePosition.x >= rect.x && m_mousePosition.y >= rect.y && m_mousePosition.x < rect.x + rect.w && m_mousePosition.y < rect.y + rect.h)
+								{
+									color.r = (uint8_t)std::min<uint32_t>(((uint32_t)color.r * 5) / 4, 255);
+									color.g = (uint8_t)std::min<uint32_t>(((uint32_t)color.g * 5) / 4, 255);
+									color.b = (uint8_t)std::min<uint32_t>(((uint32_t)color.b * 5) / 4, 255);
+
+									cursorValue = value;
+								}
+
+								SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+								SDL_RenderFillRect(m_renderer, &rect);
+							}
+
+							x -= xStep;
+						}
+
+						char infoBuffer[256];
+						if(cursorValue.has_value())
+							snprintf(infoBuffer, sizeof(infoBuffer), " cursor:%s", FloatToString(cursorValue.value()).c_str());
+						else
+							infoBuffer[0] = '\0';						
+
+						_DrawText(0, textY, SDL_Color{ 255, 255, 255, 255 }, "%s%s",
+							dataGroup->m_config->m_histogram->m_name.c_str(),
+							infoBuffer);
+					}
+					else
+					{
+						_DrawText(0, textY, SDL_Color{ 255, 255, 255, 255 }, "No data to show.");
+					}
+				}
+				else if(dataGroup->m_data.size() > 0)
 				{
 					float valueMin = dataGroup->GetMin();
 					float valueMax = dataGroup->GetMax();
@@ -446,6 +517,48 @@ namespace graphtail
 
 		SDL_DestroyTexture(texture);
 		SDL_FreeSurface(surface);
+	}
+
+	SDL_Color	
+	SDLWindow::_GetHistogramColor(
+		float					aValue,
+		float					aMin,
+		float					aMax)
+	{
+		GRAPHTAIL_ASSERT(m_config->m_histogramColors.size() > 1);
+
+		float range = aMax - aMin;
+		if(range <= 0.0f)
+			return SDL_Color{ 0, 0, 0, 255 };
+
+		float f = (aValue - aMin) / range;
+		
+		if(f < 0.0f)
+		{
+			const Config::Color& c = m_config->m_histogramColors[0];
+			return SDL_Color{ (uint8_t)c.m_r, (uint8_t)c.m_g, (uint8_t)c.m_b };
+		}
+
+		float i = (float)(m_config->m_histogramColors.size() - 1) * f;
+		float iFloor = floorf(i);
+		size_t i0 = (size_t)iFloor;
+		float s = (i - iFloor);
+		size_t i1 = i0 + 1;
+
+		if(i1 >= m_config->m_histogramColors.size())
+		{
+			const Config::Color& c = m_config->m_histogramColors[m_config->m_histogramColors.size() - 1];
+			return SDL_Color{ (uint8_t)c.m_r, (uint8_t)c.m_g, (uint8_t)c.m_b };
+		}
+
+		const Config::Color& c0 = m_config->m_histogramColors[i0];
+		const Config::Color& c1 = m_config->m_histogramColors[i1];
+
+		int r = std::min<int>(255, (int)((float)c0.m_r * (1.0f - s) + (float)c1.m_r * s));
+		int g = std::min<int>(255, (int)((float)c0.m_g * (1.0f - s) + (float)c1.m_g * s));
+		int b = std::min<int>(255, (int)((float)c0.m_b * (1.0f - s) + (float)c1.m_b * s));
+
+		return SDL_Color{ (uint8_t)r, (uint8_t)g, (uint8_t)b, 255 };
 	}
 
 }

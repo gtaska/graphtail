@@ -26,12 +26,20 @@ namespace graphtail
 			std::optional<uint32_t>					m_xStep;
 			std::optional<float>					m_yMin;
 			std::optional<float>					m_yMax;
+			std::optional<float>					m_histogramThreshold;
+		};
+
+		struct GroupHistogram
+		{
+			std::string								m_name;
+			std::vector<std::string>				m_ids;
 		};
 
 		struct Group
 		{
 			std::vector<std::unique_ptr<Wildcard>>	m_idWildcards;
 			GroupConfig								m_config;
+			std::unique_ptr<GroupHistogram>			m_histogram;
 		};		
 
 					Config(
@@ -65,6 +73,18 @@ namespace graphtail
 			{ 128, 128, 0 },
 			{ 128, 0, 255 },
 			{ 0, 128, 128 }
+		};
+
+		std::vector<Color>							m_histogramColors =
+		{
+			{ 52, 129, 181 },
+			{ 74, 92, 165 },
+			{ 97, 64, 147 },
+			{ 118, 46, 129 },
+			{ 139, 42, 106 },
+			{ 157, 52, 84 },
+			{ 177, 74, 59 },
+			{ 197, 98, 34 }
 		};
 	};
 

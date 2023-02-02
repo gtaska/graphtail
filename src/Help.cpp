@@ -39,6 +39,12 @@ namespace graphtail
 			"Clamp the graph y-axis to the specified range. Default is to stretch."
 		});
 
+		_DefineEntry(true, { "histogram_threshold=<value>" },
+		{
+			"Histogram values must be higher than this to be rendered. Default is",
+			"to not have a threshold."
+		});
+
 		_DefineEntry(false, { "groups=<definition>" },
 		{
 			"Defines graph groups. See example below. If no groups are defined,",
@@ -106,14 +112,24 @@ namespace graphtail
 			"    the group you can also specify group-specific parameters with\n"
 			"    '!option=value'. You can see which options can be specified per group in\n"
 			"    the list above.\n"
+			"    Use 'h(name)(column1, column2, ...)' to turn the group into a histogram\n"
+			"    heatmap.\n"
 			"\n"
-			"    Example:\n"
+			"    Example 1:\n"
 			"\n"
 			"        {i(foo)i(bar)!y_min=0!y_max=1}{i(baz)}\n"
 			"\n"
 			"        This will cause the columns 'foo' and 'bar' to be added to the same\n"
 			"        group. The y-axis will be clamped between 0 and 1. The column 'baz'\n"
 			"        will be put in a separate group.\n"
+			"\n"
+			"    Example 2:\n"
+			"\n"
+			"        {h(foo)(foo1,foo2,foo3,foo4)!histogram_threshold=0}\n"
+			"\n"
+			"        Render columns 'foo1', 'foo2', 'foo3', and 'foo4' as a histogram\n"
+			"        heatmap named 'foo'. Cells of the heatmap must have a value of\n"
+			"        atleast 0 to be rendered.\n"
 		);	
 
 		printf("\nconfig:\n"

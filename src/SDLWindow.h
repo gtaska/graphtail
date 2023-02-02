@@ -40,31 +40,35 @@ namespace graphtail
 		SDL_Point					m_mousePosition;
 		bool						m_mouseIsInWindow;
 
-		void	_CreateStretchGraph(
-					const Graphs::Data*		aData,
-					int						aWindowWidth,
-					uint32_t				aDataGroupWindowHeight,
-					uint32_t				aDataGroupY,
-					float					aValueMin,
-					float					aValueRange,
-					float&					aOutCursorValue,
-					int&					aOutCursorX);
-		void	_CreateFixedXStepGraph(
-					const Graphs::Data*		aData,
-					int						aWindowWidth,
-					uint32_t				aDataGroupWindowHeight,
-					uint32_t				aDataGroupY,
-					float					aValueMin,
-					float					aValueRange,
-					uint32_t				aXStep,
-					float&					aOutCursorValue,
-					int&					aOutCursorX);
-		void	_DrawText(
-					int						aX,
-					int						aY,
-					const SDL_Color&		aColor,
-					const char*				aFormat,
-					...);
+		void		_CreateStretchGraph(
+						const Graphs::Data*		aData,
+						int						aWindowWidth,
+						uint32_t				aDataGroupWindowHeight,
+						uint32_t				aDataGroupY,
+						float					aValueMin,
+						float					aValueRange,
+						float&					aOutCursorValue,
+						int&					aOutCursorX);
+		void		_CreateFixedXStepGraph(
+						const Graphs::Data*		aData,
+						int						aWindowWidth,
+						uint32_t				aDataGroupWindowHeight,
+						uint32_t				aDataGroupY,
+						float					aValueMin,
+						float					aValueRange,
+						uint32_t				aXStep,
+						float&					aOutCursorValue,
+						int&					aOutCursorX);
+		void		_DrawText(
+						int						aX,
+						int						aY,
+						const SDL_Color&		aColor,
+						const char*				aFormat,
+						...);
+		SDL_Color	_GetHistogramColor(
+						float					aValue,
+						float					aMin,
+						float					aMax);
 	};
 
 }
