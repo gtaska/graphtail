@@ -31,7 +31,7 @@ namespace graphtail
 		_DefineEntry(true, { "x_step=<pixels>" },
 		{
 			"Instead of stretching graph to fit the width of the window, each data",
-			"point will advance <pixels> on the x-axis."
+			"point will advance the specified number of pixels on the x-axis."
 		});
 
 		_DefineEntry(true, { "y_min=<min>", "y_max=<min>" },
@@ -105,19 +105,18 @@ namespace graphtail
 			"    Group description syntax looks a bit wonky because it's easy to parse,\n"
 			"    but it's quite simple:\n"
 			"\n"
-			"    '{' marks the beginning of a group and it's ended with '}'. Inside the\n"
-			"    brackets you can use 'i(column)' to added 'column' to the group. 'column'\n"
-			"    can also be a wildcard (for example '*something*'), which will cause any\n"
-			"    column with a name matching the wildcard to be added to the group. Inside\n"
-			"    the group you can also specify group-specific parameters with\n"
-			"    '!option=value'. You can see which options can be specified per group in\n"
-			"    the list above.\n"
+			"    '{' marks the beginning of a group and '}' ends it. Inside the brackets you\n"
+			"    can use 'i(column)' to added 'column' to the group. 'column' can also be a\n"
+			"    wildcard (for example '*something*'), which will cause any column with a\n"
+			"    name matching the wildcard to be added to the group. Inside the group you\n"
+			"    can also specify group-specific parameters with '!option=value'. You can\n"
+			"    see which options can be specified per group in the list above.\n"
 			"    Use 'h(name)(column1, column2, ...)' to turn the group into a histogram\n"
 			"    heatmap.\n"
 			"\n"
 			"    Example 1:\n"
 			"\n"
-			"        {i(foo)i(bar)!y_min=0!y_max=1}{i(baz)}\n"
+			"        --groups={i(foo)i(bar)!y_min=0!y_max=1}{i(baz)}\n"
 			"\n"
 			"        This will cause the columns 'foo' and 'bar' to be added to the same\n"
 			"        group. The y-axis will be clamped between 0 and 1. The column 'baz'\n"
@@ -125,11 +124,11 @@ namespace graphtail
 			"\n"
 			"    Example 2:\n"
 			"\n"
-			"        {h(foo)(foo1,foo2,foo3,foo4)!histogram_threshold=0}\n"
+			"        --groups={h(foo)(foo1,foo2,foo3,foo4)!histogram_threshold=0}\n"
 			"\n"
 			"        Render columns 'foo1', 'foo2', 'foo3', and 'foo4' as a histogram\n"
 			"        heatmap named 'foo'. Cells of the heatmap must have a value of\n"
-			"        atleast 0 to be rendered.\n"
+			"        at least 0 to be rendered.\n"
 		);	
 
 		printf("\nconfig:\n"
@@ -172,7 +171,19 @@ namespace graphtail
 			printf("|");
 
 			for(const std::string& line : t->m_description)
-				printf(" %s", line.c_str());
+			{
+				printf(" ");
+
+				const char* p = line.c_str();
+				while(*p != '\0')
+				{
+					if(*p == '\'')
+						printf("```");
+					else
+						printf("%c", *p);
+					p++;
+				}
+			}
 
 			if(t->m_group)
 				printf(" This option can be used in a group definition.");
