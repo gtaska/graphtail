@@ -15,9 +15,10 @@ namespace graphtail
 			Data(
 				const char*																	aId = "")
 				: m_id(aId)
-				, m_min(0)
-				, m_max(0)
-				, m_sum(0)
+				, m_min(0.0f)
+				, m_max(0.0f)
+				, m_sum(0.0f)
+				, m_isInAutoGroup(false)
 			{
 
 			}
@@ -25,10 +26,10 @@ namespace graphtail
 			void
 			Reset()
 			{
-				m_min = 0;
-				m_max = 0;
-				m_sum = 0;
 				m_values.clear();
+				m_min = 0.0f;
+				m_max = 0.0f;
+				m_sum = 0.0f;
 			}
 
 			void
@@ -56,6 +57,7 @@ namespace graphtail
 			float								m_min;
 			float								m_max;
 			float								m_sum;
+			bool								m_isInAutoGroup;
 		};
 
 		struct DataGroup
@@ -63,6 +65,7 @@ namespace graphtail
 			DataGroup(
 				const Config::Group*														aConfig)
 				: m_config(aConfig)
+				, m_isAutoGroup(false)
 			{
 			}
 
@@ -114,7 +117,8 @@ namespace graphtail
 
 			// Public data
 			const Config::Group*				m_config;
-			std::vector<std::unique_ptr<Data>>	m_data;
+			std::vector<std::unique_ptr<Data>>	m_data;			
+			bool								m_isAutoGroup;
 		};
 
 														Graphs(

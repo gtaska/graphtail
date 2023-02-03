@@ -1,5 +1,6 @@
 #include "Base.h"
 
+#include "ErrorUtils.h"
 #include "Graphs.h"
 
 namespace graphtail
@@ -42,7 +43,44 @@ namespace graphtail
 	Graphs::OnDataReset(
 		const char*			aId) 
 	{
-		_GetData(aId)->Reset();			
+		std::unordered_map<std::string, Data*>::iterator i = m_dataTable.find(aId);
+		if (i == m_dataTable.end())
+			return;
+
+		Data* data = i->second;
+
+		if(data->m_isInAutoGroup)
+		{
+			// This data isn't in a configuration-defined group. Find it's group
+			// and remove it too.
+			bool found = false;
+
+			for (size_t j = 0; j < m_dataGroups.size(); j++)
+			{
+				std::unique_ptr<DataGroup>& dataGroup = m_dataGroups[j];
+
+				if(dataGroup->m_isAutoGroup)
+				{
+					GRAPHTAIL_ASSERT(dataGroup->m_data.size() == 1);
+
+					if(dataGroup->m_data[0].get() == data)
+					{
+						m_dataGroups.erase(m_dataGroups.begin() + j);
+
+						found = true;
+						break;
+					}
+				}
+			}
+
+			GRAPHTAIL_ASSERT(found);
+
+			m_dataTable.erase(i);
+		}
+		else
+		{
+			data->Reset();
+		}
 
 		m_version++;
 	}
@@ -98,7 +136,11 @@ namespace graphtail
 			// No matching group, create a new automatic group
 			DataGroup* dataGroup = _CreateDataGroup();
 
+			dataGroup->m_isAutoGroup = true;
+
 			data = dataGroup->CreateData(aId);
+
+			data->m_isInAutoGroup = true;
 		}
 
 		m_dataTable[aId] = data;
