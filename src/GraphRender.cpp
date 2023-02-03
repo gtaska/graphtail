@@ -31,6 +31,7 @@ namespace graphtail
 		float valueRange = valueMax - valueMin;
 
 		int textY = aDrawContext->m_dataGroupY + 1;
+		int cursorX = 0;
 
 		for (const std::unique_ptr<Graphs::Data>& data : aDataGroup->m_data)
 		{
@@ -40,23 +41,19 @@ namespace graphtail
 			const Config::Color& color = aDrawContext->m_config->m_graphColors[aDrawContext->m_colorIndex % aDrawContext->m_config->m_graphColors.size()];
 
 			// Graph
-			int cursorX = 0;
-			float cursorValue = 0.0f;
+			size_t cursorIndex = 0;
 
 			if (valueRange > 0)
 			{
 				m_tempGraphPoints.clear();
 
 				if (aDataGroup->m_config != NULL && aDataGroup->m_config->m_config.m_xStep.has_value())
-					_CreateFixedXStepGraph(aDrawContext, data.get(), valueMin, valueRange, (int)aDataGroup->m_config->m_config.m_xStep.value(), cursorValue, cursorX);
+					_CreateFixedXStepGraph(aDrawContext, data.get(), valueMin, valueRange, (int)aDataGroup->m_config->m_config.m_xStep.value(), cursorIndex, cursorX);
 				else
-					_CreateStretchGraph(aDrawContext, data.get(), valueMin, valueRange, cursorValue, cursorX);
+					_CreateStretchGraph(aDrawContext, data.get(), valueMin, valueRange, cursorIndex, cursorX);
 
-				if (aHover)
-				{
-					SDL_SetRenderDrawColor(aDrawContext->m_renderer, 128, 128, 128, 255);
-					SDL_RenderDrawLine(aDrawContext->m_renderer, cursorX, aDrawContext->m_dataGroupY, cursorX, aDrawContext->m_dataGroupY + aDrawContext->m_dataGroupWindowHeight);
-				}
+				if(aHover && aDrawContext->m_mouseState->m_isMoving)
+					m_stickyCursor = StickyCursor{ aDataGroup, cursorIndex };
 
 				SDL_SetRenderDrawColor(aDrawContext->m_renderer, (uint8_t)color.m_r, (uint8_t)color.m_g, (uint8_t)color.m_b, 255);
 				SDL_RenderDrawLines(aDrawContext->m_renderer, &m_tempGraphPoints[0], (int)m_tempGraphPoints.size());
@@ -67,8 +64,8 @@ namespace graphtail
 			if (data->m_values.size() > 0)
 			{
 				char cursorValueBuffer[128];
-				if (aHover)
-					snprintf(cursorValueBuffer, sizeof(cursorValueBuffer), " cursor:%s", StringUtils::FloatToString(cursorValue).c_str());
+				if (m_stickyCursor.has_value() && m_stickyCursor->m_dataGroup == aDataGroup && m_stickyCursor->m_index < data->m_values.size())
+					snprintf(cursorValueBuffer, sizeof(cursorValueBuffer), " cursor:%s", StringUtils::FloatToString(data->m_values[m_stickyCursor->m_index]).c_str());
 				else
 					cursorValueBuffer[0] = '\0';
 
@@ -91,6 +88,12 @@ namespace graphtail
 
 			textY += (int)aDrawContext->m_config->m_fontSize + 6;
 		}
+
+		if (m_stickyCursor.has_value() && m_stickyCursor->m_dataGroup == aDataGroup)
+		{
+			SDL_SetRenderDrawColor(aDrawContext->m_renderer, 128, 128, 128, 255);
+			SDL_RenderDrawLine(aDrawContext->m_renderer, cursorX, aDrawContext->m_dataGroupY, cursorX, aDrawContext->m_dataGroupY + aDrawContext->m_dataGroupWindowHeight);
+		}
 	}
 
 	//-----------------------------------------------------------------------------------
@@ -101,7 +104,7 @@ namespace graphtail
 		const Graphs::Data*		aData,
 		float					aValueMin,
 		float					aValueRange,
-		float&					aOutCursorValue,
+		size_t&					aOutCursorIndex,
 		int&					aOutCursorX)
 	{
 		if (aData->m_values.size() < (size_t)aDrawContext->m_windowWidth && aData->m_values.size() > 1)
@@ -109,13 +112,13 @@ namespace graphtail
 			for (size_t i = 0; i < aData->m_values.size(); i++)
 			{
 				int x = ((int)i * aDrawContext->m_windowWidth) / (int)(aData->m_values.size() - 1);
-				int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)(aDrawContext->m_dataGroupWindowHeight - 1)) + aDrawContext->m_dataGroupY;
+				int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)(aDrawContext->m_dataGroupWindowHeight - 1)) + aDrawContext->m_dataGroupY - 1;
 
 				if (x <= aDrawContext->m_mouseState->m_position.x + (aDrawContext->m_windowWidth / (int)aData->m_values.size()) / 2)
-				{
+					aOutCursorIndex = i;
+
+				if(m_stickyCursor.has_value() && i == m_stickyCursor->m_index)
 					aOutCursorX = x;
-					aOutCursorValue = aData->m_values[i];
-				}
 
 				m_tempGraphPoints.push_back({ x, y });
 			}
@@ -126,13 +129,13 @@ namespace graphtail
 			{
 				size_t i = ((size_t)x * aData->m_values.size()) / (size_t)aDrawContext->m_windowWidth;
 				GRAPHTAIL_ASSERT(i < aData->m_values.size());
-				int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)(aDrawContext->m_dataGroupWindowHeight - 1)) + aDrawContext->m_dataGroupY;
+				int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)(aDrawContext->m_dataGroupWindowHeight - 1)) + aDrawContext->m_dataGroupY - 1;
 
 				if (x <= aDrawContext->m_mouseState->m_position.x)
-				{
+					aOutCursorIndex = i;
+
+				if (m_stickyCursor.has_value() && i == m_stickyCursor->m_index)
 					aOutCursorX = x;
-					aOutCursorValue = aData->m_values[i];
-				}
 
 				m_tempGraphPoints.push_back({ x, y });
 			}
@@ -147,7 +150,7 @@ namespace graphtail
 		float					aValueMin,
 		float					aValueRange,
 		int						aXStep,
-		float&					aOutCursorValue,
+		size_t&					aOutCursorIndex,
 		int&					aOutCursorX)
 	{
 		size_t iMin = 0;
@@ -161,13 +164,13 @@ namespace graphtail
 		for (size_t i = iMin; i <= iMax; i++)
 		{
 			GRAPHTAIL_ASSERT(i < aData->m_values.size());
-			int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)(aDrawContext->m_dataGroupWindowHeight - 1)) + aDrawContext->m_dataGroupY;
+			int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)(aDrawContext->m_dataGroupWindowHeight - 1)) + aDrawContext->m_dataGroupY - 1;
 
-			if (x < aDrawContext->m_mouseState->m_position.x + aXStep / 2)
-			{
+			if (x < aDrawContext->m_mouseState->m_position.x + aXStep / 2)		
+				aOutCursorIndex = i;		
+
+			if (m_stickyCursor.has_value() && i == m_stickyCursor->m_index)
 				aOutCursorX = x;
-				aOutCursorValue = aData->m_values[i];
-			}
 
 			m_tempGraphPoints.push_back({ x, y });
 			x += aXStep;

@@ -25,7 +25,7 @@ namespace graphtail
 						const Graphs::Data*			aData,
 						float						aValueMin,
 						float						aValueRange,
-						float&						aOutCursorValue,
+						size_t&						aOutCursorIndex,
 						int&						aOutCursorX);
 		void		_CreateFixedXStepGraph(
 						RenderContext*				aDrawContext,
@@ -33,10 +33,18 @@ namespace graphtail
 						float						aValueMin,
 						float						aValueRange,
 						int							aXStep,
-						float&						aOutCursorValue,
+						size_t&						aOutCursorIndex,
 						int&						aOutCursorX);
 
-		std::vector<SDL_Point>		m_tempGraphPoints;
+		std::vector<SDL_Point>			m_tempGraphPoints;
+
+		struct StickyCursor
+		{
+			const Graphs::DataGroup*	m_dataGroup = NULL;
+			size_t						m_index = 0;
+		};
+
+		std::optional<StickyCursor>		m_stickyCursor;
 	};
 
 }

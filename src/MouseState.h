@@ -38,7 +38,12 @@ namespace graphtail
 			{
 				updated = true;
 
-				m_position = mouse;
+				m_isMoving = true;
+				m_position = mouse;				
+			}
+			else
+			{
+				m_isMoving = false;
 			}
 
 			return updated;
@@ -47,6 +52,7 @@ namespace graphtail
 		// Public data
 		SDL_Point					m_position;
 		bool						m_isInWindow = false;
+		bool						m_isMoving = false;
 	};
 
 }
