@@ -109,7 +109,7 @@ namespace graphtail
 			for (size_t i = 0; i < aData->m_values.size(); i++)
 			{
 				int x = ((int)i * aDrawContext->m_windowWidth) / (int)(aData->m_values.size() - 1);
-				int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)aDrawContext->m_dataGroupWindowHeight) + aDrawContext->m_dataGroupY;
+				int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)(aDrawContext->m_dataGroupWindowHeight - 1)) + aDrawContext->m_dataGroupY;
 
 				if (x <= aDrawContext->m_mouseState->m_position.x + (aDrawContext->m_windowWidth / (int)aData->m_values.size()) / 2)
 				{
@@ -126,7 +126,7 @@ namespace graphtail
 			{
 				size_t i = ((size_t)x * aData->m_values.size()) / (size_t)aDrawContext->m_windowWidth;
 				GRAPHTAIL_ASSERT(i < aData->m_values.size());
-				int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)aDrawContext->m_dataGroupWindowHeight) + aDrawContext->m_dataGroupY;
+				int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)(aDrawContext->m_dataGroupWindowHeight - 1)) + aDrawContext->m_dataGroupY;
 
 				if (x <= aDrawContext->m_mouseState->m_position.x)
 				{
@@ -161,7 +161,7 @@ namespace graphtail
 		for (size_t i = iMin; i <= iMax; i++)
 		{
 			GRAPHTAIL_ASSERT(i < aData->m_values.size());
-			int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)aDrawContext->m_dataGroupWindowHeight) + aDrawContext->m_dataGroupY;
+			int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)(aDrawContext->m_dataGroupWindowHeight - 1)) + aDrawContext->m_dataGroupY;
 
 			if (x < aDrawContext->m_mouseState->m_position.x + aXStep / 2)
 			{
