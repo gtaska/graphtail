@@ -130,7 +130,15 @@ namespace
 			PARSE_STATE_MULTI_LINE_VALUE
 		};
 
+		enum CommentState
+		{
+			COMMENT_STATE_NONE,
+			COMMENT_STATE_C_STYLE,
+			COMMENT_STATE_CPP_STYLE
+		};
+
 		ParseState parseState = PARSE_STATE_INIT;
+		CommentState commentState = COMMENT_STATE_NONE;
 		std::string argName;
 		std::vector<char> value;
 		uint32_t lineNum = 1;
@@ -141,6 +149,42 @@ namespace
 
 			if(c == '\n')
 				lineNum++;
+
+			switch(commentState)
+			{
+			case COMMENT_STATE_NONE:	
+				// We can safely look ahead 1 because of null termination
+				if(c == '/' && file.m_data[i + 1] == '*')
+				{
+					commentState = COMMENT_STATE_C_STYLE;
+					i++;
+					continue;
+				}
+				else if (c == '/' && file.m_data[i + 1] == '/')
+				{
+					commentState = COMMENT_STATE_CPP_STYLE;
+					i++;
+					continue;
+				}
+				break;
+
+			case COMMENT_STATE_C_STYLE:				
+				if (c == '*' && file.m_data[i + 1] == '/')
+				{
+					commentState = COMMENT_STATE_NONE;
+					i++;
+					continue;
+				}
+				break;
+
+			case COMMENT_STATE_CPP_STYLE:
+				if(c == '\n')
+					commentState = COMMENT_STATE_NONE;
+				break;
+			}
+
+			if(commentState != COMMENT_STATE_NONE)
+				continue;
 
 			switch(parseState)
 			{
