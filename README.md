@@ -39,8 +39,15 @@ Option|Description
 ```--x_step=<pixels>```| Instead of stretching graph to fit the width of the window, each data point will advance the specified number of pixels the x-axis. This option can be used in a group definition.
 ```--y_min=<min>```<br>```--y_max=<min>```| Clamp the graph y-axis to the specified range. Default is to stretch. This option can be used in a group definition.
 ```--histogram_threshold=<value>```| Histogram values must be higher than this to be rendered. Default is to not have a threshold. This option can be used in a group definition.
+```--is_size```| Numbers will be shown with K/M/G suffixes if large enough. This option can be used in a group definition.
 ```--groups=<definition>```| Defines graph groups. See example below. If no groups are defined, all columns will get their own group automatically.
 ```--config=<path>```| Loads configuration from specified file. See below for an example of a configuration file.
+
+## Keyboard shortcuts
+Key|Action
+-|-
+ESC|Terminate program.
+F1|Toggle x-axis stretching to fit window width.
 
 ## Group definitions
 All graphs will be shown separately per default, but you can group specific ones together if you want to with the ```--groups``` option.
