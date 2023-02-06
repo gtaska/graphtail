@@ -45,6 +45,11 @@ namespace graphtail
 			"to not have a threshold."
 		});
 
+		_DefineEntry(true, { "is_size" },
+		{
+			"Numbers will be shown with K/M/G suffixes if large enough."
+		});
+
 		_DefineEntry(false, { "groups=<definition>" },
 		{
 			"Defines graph groups. See example below. If no groups are defined,",
