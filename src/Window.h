@@ -40,6 +40,8 @@ namespace graphtail
 		HistogramHeatmapRender		m_histogramHeatmapRender;
 		MouseState					m_mouseState;
 
+		bool						m_forceXStretch;
+
 		void		_DrawText(
 						int						aX,
 						int						aY,

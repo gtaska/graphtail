@@ -23,7 +23,8 @@ namespace graphtail
 	GraphRender::Draw(
 		RenderContext*				aDrawContext,
 		const Graphs::DataGroup*	aDataGroup,
-		bool						aHover)
+		bool						aHover,
+		bool						aForceXStretch)
 	{
 		float valueMin = aDataGroup->GetMin();
 		float valueMax = aDataGroup->GetMax();
@@ -47,7 +48,7 @@ namespace graphtail
 			{
 				m_tempGraphPoints.clear();
 
-				if (aDataGroup->m_config != NULL && aDataGroup->m_config->m_config.m_xStep.has_value())
+				if (aDataGroup->m_config != NULL && aDataGroup->m_config->m_config.m_xStep.has_value() && !aForceXStretch)
 					_CreateFixedXStepGraph(aDrawContext, data.get(), valueMin, valueRange, (int)aDataGroup->m_config->m_config.m_xStep.value(), cursorIndex, cursorX);
 				else
 					_CreateStretchGraph(aDrawContext, data.get(), valueMin, valueRange, cursorIndex, cursorX);
@@ -80,7 +81,7 @@ namespace graphtail
 				infoBuffer[0] = '\0';
 			}
 
-			aDrawContext->DrawText(0, textY, SDL_Color{ (uint8_t)color.m_r, (uint8_t)color.m_g, (uint8_t)color.m_b, 255 }, "%s%s",
+			aDrawContext->DrawText(RenderContext::DRAW_TEXT_ALIGN_TOP_LEFT, 0, textY, SDL_Color{ (uint8_t)color.m_r, (uint8_t)color.m_g, (uint8_t)color.m_b, 255 }, "%s%s",
 				data->m_id.c_str(),
 				infoBuffer);
 

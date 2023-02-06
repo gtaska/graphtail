@@ -16,7 +16,8 @@ namespace graphtail
 		void		Draw(
 						RenderContext*				aDrawContext,
 						const Graphs::DataGroup*	aDataGroup,
-						bool						aHover);
+						bool						aHover,
+						bool						aForceXStretch);
 
 	private:
 

@@ -17,6 +17,7 @@ namespace graphtail
 		: m_config(aConfig)
 		, m_lastDrawnGraphsVersion(0)
 		, m_windowIsDirty(true)
+		, m_forceXStretch(false)
 	{
 		{
 			int result = SDL_Init(SDL_INIT_VIDEO);
@@ -94,6 +95,7 @@ namespace graphtail
 				switch(event.key.keysym.sym)
 				{
 				case SDLK_ESCAPE:	return false;
+				case SDLK_F1:		m_forceXStretch = !m_forceXStretch; m_windowIsDirty = true; break;
 				default:			break;
 				}
 				break;
@@ -168,13 +170,13 @@ namespace graphtail
 					// Data group is a bunch of normal line graphs
 					if (dataGroup->m_data.size() > 0)
 					{
-						m_graphRender.Draw(&context, dataGroup.get(), mouseCursorInDataGroup);
+						m_graphRender.Draw(&context, dataGroup.get(), mouseCursorInDataGroup, m_forceXStretch);
 					}
 					else
 					{
 						const Config::Color& color = m_config->m_graphColors[context.m_colorIndex % m_config->m_graphColors.size()];
 
-						context.DrawText(0, 1, SDL_Color{ (uint8_t)color.m_r, (uint8_t)color.m_g, (uint8_t)color.m_b, 255 }, "No data to show.");
+						context.DrawText(RenderContext::DRAW_TEXT_ALIGN_TOP_LEFT, 0, 1, SDL_Color{ (uint8_t)color.m_r, (uint8_t)color.m_g, (uint8_t)color.m_b, 255 }, "No data to show.");
 
 						context.m_colorIndex++;
 					}
@@ -190,8 +192,11 @@ namespace graphtail
 			SDL_SetRenderDrawColor(m_renderer, 32, 32, 32, 255);
 			SDL_RenderClear(m_renderer);
 
-			context.DrawText(0, 0, SDL_Color{ 255, 255, 255, 255 }, "No data to show.");
+			context.DrawText(RenderContext::DRAW_TEXT_ALIGN_TOP_LEFT, 0, 0, SDL_Color{ 255, 255, 255, 255 }, "No data to show.");
 		}
+
+		if(m_forceXStretch)
+			context.DrawText(RenderContext::DRAW_TEXT_ALIGN_BOTTOM_RIGHT, 0, 0, SDL_Color{ 255, 255, 255, 255 }, "Fit");
 
 		SDL_RenderPresent(m_renderer);
 	}

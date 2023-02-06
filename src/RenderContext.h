@@ -10,6 +10,12 @@ namespace graphtail
 
 	struct RenderContext
 	{
+		enum DrawTextAlign
+		{
+			DRAW_TEXT_ALIGN_TOP_LEFT,
+			DRAW_TEXT_ALIGN_BOTTOM_RIGHT
+		};
+
 		RenderContext(
 			const Config*			aConfig,
 			TTF_Font*				aFont,
@@ -23,8 +29,10 @@ namespace graphtail
 			
 		}
 
+
 		void
 		DrawText(
+			DrawTextAlign			aDrawTextAlign,
 			int						aX,
 			int						aY,
 			const SDL_Color&		aColor,
@@ -58,10 +66,31 @@ namespace graphtail
 			SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
 
 			SDL_Rect rect;
-			rect.x = aX;
-			rect.y = aY;
 			rect.w = surface->w;
 			rect.h = surface->h;
+
+			switch(aDrawTextAlign)
+			{
+			case DRAW_TEXT_ALIGN_TOP_LEFT:
+				rect.x = aX;
+				rect.y = aY;
+				break;
+
+			case DRAW_TEXT_ALIGN_BOTTOM_RIGHT:
+				{
+					int screenWidth;
+					int screenHeight;
+					int result = SDL_GetRendererOutputSize(m_renderer, &screenWidth, &screenHeight);
+					GRAPHTAIL_CHECK(result == 0, "SDL_GetRendererOutputSize() failed: %s", SDL_GetError());
+					rect.x = screenWidth - rect.w + aX;
+					rect.y = screenHeight - rect.h + aY;
+				}
+				break;
+
+			default:
+				GRAPHTAIL_ASSERT(false);
+			}
+
 
 			SDL_RenderCopy(m_renderer, texture, NULL, &rect);
 

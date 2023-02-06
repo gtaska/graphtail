@@ -92,13 +92,13 @@ namespace graphtail
 			else
 				infoBuffer[0] = '\0';
 
-			aDrawContext->DrawText(0, textY, SDL_Color{ 255, 255, 255, 255 }, "%s%s",
+			aDrawContext->DrawText(RenderContext::DRAW_TEXT_ALIGN_TOP_LEFT, 0, textY, SDL_Color{ 255, 255, 255, 255 }, "%s%s",
 				aDataGroup->m_config->m_histogram->m_name.c_str(),
 				infoBuffer);
 		}
 		else
 		{
-			aDrawContext->DrawText(0, textY, SDL_Color{ 255, 255, 255, 255 }, "No data to show.");
+			aDrawContext->DrawText(RenderContext::DRAW_TEXT_ALIGN_TOP_LEFT, 0, textY, SDL_Color{ 255, 255, 255, 255 }, "No data to show.");
 		}
 	}
 
