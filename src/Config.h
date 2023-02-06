@@ -27,6 +27,7 @@ namespace graphtail
 			std::optional<float>					m_yMin;
 			std::optional<float>					m_yMax;
 			std::optional<float>					m_histogramThreshold;
+			std::optional<bool>						m_isSize;
 		};
 
 		struct GroupHistogram

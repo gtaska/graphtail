@@ -28,8 +28,9 @@
 
 namespace graphtail::StringUtils
 {
-
+	
 	std::string		FloatToString(
-						float			aValue);
+						float			aValue,
+						bool			aIsSize);
 
 }

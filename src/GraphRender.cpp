@@ -34,6 +34,8 @@ namespace graphtail
 		int textY = aDrawContext->m_dataGroupY + 1;
 		int cursorX = 0;
 
+		bool isSize = aDataGroup->m_config->m_config.m_isSize.has_value() && aDataGroup->m_config->m_config.m_isSize.value();
+
 		for (const std::unique_ptr<Graphs::Data>& data : aDataGroup->m_data)
 		{
 			if (data->m_values.size() == 0)
@@ -66,14 +68,14 @@ namespace graphtail
 			{
 				char cursorValueBuffer[128];
 				if (m_stickyCursor.has_value() && m_stickyCursor->m_dataGroup == aDataGroup && m_stickyCursor->m_index < data->m_values.size())
-					snprintf(cursorValueBuffer, sizeof(cursorValueBuffer), " cursor:%s", StringUtils::FloatToString(data->m_values[m_stickyCursor->m_index]).c_str());
+					snprintf(cursorValueBuffer, sizeof(cursorValueBuffer), " cursor:%s", StringUtils::FloatToString(data->m_values[m_stickyCursor->m_index], isSize).c_str());
 				else
 					cursorValueBuffer[0] = '\0';
 
 				snprintf(infoBuffer, sizeof(infoBuffer), " avg:%s min:%s max:%s%s",
-					StringUtils::FloatToString(data->m_sum / (float)data->m_values.size()).c_str(),
-					StringUtils::FloatToString(data->m_min).c_str(),
-					StringUtils::FloatToString(data->m_max).c_str(),
+					StringUtils::FloatToString(data->m_sum / (float)data->m_values.size(), isSize).c_str(),
+					StringUtils::FloatToString(data->m_min, isSize).c_str(),
+					StringUtils::FloatToString(data->m_max, isSize).c_str(),
 					cursorValueBuffer);
 			}
 			else

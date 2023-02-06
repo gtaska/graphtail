@@ -7,10 +7,26 @@ namespace graphtail::StringUtils
 
 	std::string		
 	FloatToString(
-		float			aValue)
+		float			aValue, 
+		bool			aIsSize)
 	{
 		char buffer[256];
-		snprintf(buffer, sizeof(buffer), "%f", aValue);
+
+		if(aIsSize)
+		{
+			if(aValue > 1024.0f * 1024.0f * 1024.0f)
+				snprintf(buffer, sizeof(buffer), "%.1fG", aValue / (1024.0f * 1024.0f * 1024.0f));
+			else if (aValue > 1024.0f * 1024.0f)
+				snprintf(buffer, sizeof(buffer), "%.1fM", aValue / (1024.0f * 1024.0f));
+			else if (aValue > 1024.0f)
+					snprintf(buffer, sizeof(buffer), "%.1fK", aValue / (1024.0f));
+			else
+				snprintf(buffer, sizeof(buffer), "%f", aValue);
+		}
+		else
+		{
+			snprintf(buffer, sizeof(buffer), "%f", aValue);
+		}
 
 		// Remove trailing zeroes
 		size_t length = strlen(buffer);

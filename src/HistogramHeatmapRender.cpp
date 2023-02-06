@@ -26,6 +26,8 @@ namespace graphtail
 	{
 		int textY = aDrawContext->m_dataGroupY + 1;
 
+		bool isSize = aDataGroup->m_config->m_config.m_isSize.has_value() && aDataGroup->m_config->m_config.m_isSize.value();
+
 		GRAPHTAIL_ASSERT(aDataGroup->m_data.size() == 1);
 		const Graphs::Data* histogramData = aDataGroup->m_data[0].get();
 		if (histogramData->m_values.size() > 0)
@@ -88,7 +90,7 @@ namespace graphtail
 
 			char infoBuffer[256];
 			if (cursorId != NULL)
-				snprintf(infoBuffer, sizeof(infoBuffer), " %s:%s", cursorId, StringUtils::FloatToString(cursorValue).c_str());
+				snprintf(infoBuffer, sizeof(infoBuffer), " %s:%s", cursorId, StringUtils::FloatToString(cursorValue, isSize).c_str());
 			else
 				infoBuffer[0] = '\0';
 

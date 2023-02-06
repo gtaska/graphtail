@@ -542,6 +542,12 @@ namespace graphtail
 			m_histogramThreshold = _ParseFloat(aValue.c_str());
 			return true;
 		}
+		else if (aArg == "is_size")
+		{
+			GRAPHTAIL_CHECK(aValue == "", "'is_size' does not have a value.");
+			m_isSize = true;
+			return true;
+		}
 
 		return false;
 	}
@@ -561,6 +567,9 @@ namespace graphtail
 
 		if(!m_histogramThreshold.has_value())
 			m_histogramThreshold = aDefaults.m_histogramThreshold;
+
+		if (!m_isSize.has_value())
+			m_isSize = aDefaults.m_isSize;
 	}
 
 	//------------------------------------------------------------------------------------
