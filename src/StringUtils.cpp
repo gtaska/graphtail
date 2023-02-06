@@ -19,9 +19,9 @@ namespace graphtail::StringUtils
 			else if (aValue > 1024.0f * 1024.0f)
 				snprintf(buffer, sizeof(buffer), "%.1fM", aValue / (1024.0f * 1024.0f));
 			else if (aValue > 1024.0f)
-					snprintf(buffer, sizeof(buffer), "%.1fK", aValue / (1024.0f));
+				snprintf(buffer, sizeof(buffer), "%.1fK", aValue / (1024.0f));
 			else
-				snprintf(buffer, sizeof(buffer), "%f", aValue);
+				snprintf(buffer, sizeof(buffer), "%.0f.", aValue);
 		}
 		else
 		{
