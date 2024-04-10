@@ -12,13 +12,13 @@ namespace graphtail
 	{
 
 	}
-	
+
 	HistogramHeatmapRender::~HistogramHeatmapRender()
 	{
 
 	}
 
-	void		
+	void
 	HistogramHeatmapRender::Draw(
 		RenderContext*				aDrawContext,
 		const Graphs::DataGroup*	aDataGroup,
@@ -67,10 +67,10 @@ namespace graphtail
 
 					SDL_Color color = _GetHistogramColor(aDrawContext, value, aDataGroup->GetMin(), aDataGroup->GetMax());
 
-					if (aHover 
-						&& aDrawContext->m_mouseState->m_position.x >= rect.x 
-						&& aDrawContext->m_mouseState->m_position.y >= rect.y 
-						&& aDrawContext->m_mouseState->m_position.x < rect.x + rect.w 
+					if (aHover
+						&& aDrawContext->m_mouseState->m_position.x >= rect.x
+						&& aDrawContext->m_mouseState->m_position.y >= rect.y
+						&& aDrawContext->m_mouseState->m_position.x < rect.x + rect.w
 						&& aDrawContext->m_mouseState->m_position.y < rect.y + rect.h)
 					{
 						color.r = (uint8_t)std::min<uint32_t>(((uint32_t)color.r * 5) / 4, 255);
@@ -106,7 +106,7 @@ namespace graphtail
 
 	//----------------------------------------------------------------------------------------
 
-	SDL_Color	
+	SDL_Color
 	HistogramHeatmapRender::_GetHistogramColor(
 		const RenderContext*	aDrawContext,
 		float					aValue,
@@ -120,7 +120,7 @@ namespace graphtail
 			return SDL_Color{ 0, 0, 0, 255 };
 
 		float f = (aValue - aMin) / range;
-		
+
 		if(f < 0.0f)
 		{
 			const Config::Color& c = aDrawContext->m_config->m_histogramColors[0];

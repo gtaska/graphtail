@@ -17,7 +17,7 @@
 				#_Condition, 												\
 				"" __VA_ARGS__);											\
 	} while(false)
-	
+
 #define GRAPHTAIL_FATAL_ERROR(...)											\
 	graphtail::ErrorUtils::Terminate("" __VA_ARGS__)
 

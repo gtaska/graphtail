@@ -26,7 +26,7 @@ namespace graphtail
 			, m_renderer(aRenderer)
 			, m_mouseState(aMouseState)
 		{
-			
+
 		}
 
 

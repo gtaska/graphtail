@@ -23,13 +23,13 @@ namespace graphtail
 	{
 		GRAPHTAIL_ASSERT(m_listener != NULL);
 	}
-	
+
 	CSVTail::~CSVTail()
 	{
 		_CloseFile();
 	}
 
-	void	
+	void
 	CSVTail::Update()
 	{
 		if(m_fd == -1 && m_timer.HasExpired())
@@ -41,7 +41,7 @@ namespace graphtail
 
 	//-----------------------------------------------------------------------------
 
-	void				
+	void
 	CSVTail::_OpenFile()
 	{
 		int flags = O_RDONLY;
@@ -62,8 +62,8 @@ namespace graphtail
 
 		m_lineNum = 1;
 	}
-	
-	void				
+
+	void
 	CSVTail::_ReadFile()
 	{
 		GRAPHTAIL_ASSERT(m_fd != -1);
@@ -77,7 +77,7 @@ namespace graphtail
 			{
 				_ResetFile();
 				_CloseFile();
-			}				
+			}
 			else
 			{
 				size_t newFileSize = (size_t)s.st_size;
@@ -118,7 +118,7 @@ namespace graphtail
 		}
 	}
 
-	void				
+	void
 	CSVTail::_ParseBuffer(
 		const char*		aBuffer,
 		size_t			aBufferSize)
@@ -141,7 +141,7 @@ namespace graphtail
 				_ParseBufferFlushColumn();
 
 				m_currentColumnIndex = 0;
-				
+
 				if(!m_hasHeaders)
 					m_hasHeaders = true;
 			}
@@ -156,7 +156,7 @@ namespace graphtail
 		}
 	}
 
-	void				
+	void
 	CSVTail::_ParseBufferFlushColumn()
 	{
 		GRAPHTAIL_ASSERT(m_parseBufferBytes < sizeof(m_parseBuffer));
@@ -193,11 +193,11 @@ namespace graphtail
 
 		if(notNumber || m_parseBufferBytes == 0)
 			_Warning("Non-numeric data encountered.");
-		
+
 		return (float)atof(m_parseBuffer);
 	}
 
-	void				
+	void
 	CSVTail::_Warning(
 		const char*		aMessage)
 	{
@@ -209,7 +209,7 @@ namespace graphtail
 		}
 	}
 
-	void				
+	void
 	CSVTail::_CloseFile()
 	{
 		if (m_fd != -1)

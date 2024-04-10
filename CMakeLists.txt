@@ -30,7 +30,7 @@ FetchContent_Declare(
 	brotli
 	GIT_REPOSITORY https://github.com/google/brotli
 	GIT_TAG v1.0.9)
-FetchContent_MakeAvailable(brotli)	
+FetchContent_MakeAvailable(brotli)
 
 set(BROTLI_LIBRARIES_STATIC brotlidec-static)
 
@@ -74,7 +74,7 @@ set(SDL2TTF_INSTALL OFF)
 FetchContent_Declare(
 	SDL_ttf
 	GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf
-	GIT_TAG release-2.20.1)			
+	GIT_TAG release-2.20.1)
 FetchContent_MakeAvailable(SDL_ttf)
 
 set(SDL_TTF_INCLUDE_DIRS "${SDL2_ttf_SOURCE_DIR}/include")
@@ -88,14 +88,14 @@ if (MSVC)
 else()
     # lots of warnings and all warnings as errors
     add_compile_options(
-		-Wall 
-		-Wextra 
-		-pedantic 
-		-Werror 
+		-Wall
+		-Wextra
+		-pedantic
+		-Werror
 		-Wno-unused-function 	# I want unused functions for debugging purposes
 		-Wno-reorder			# I want to be able to initialize class members in any order
 		-Wno-class-memaccess	# I want to be able to memset() things that I know are safe to memset()
-	)	
+	)
 endif()
 
 add_subdirectory(src)

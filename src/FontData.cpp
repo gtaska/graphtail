@@ -12,7 +12,7 @@ namespace
 	// Brotli-compressed to reduce source code size
 	static const size_t FONT_DATA_COMPRESSED_SIZE = 14196;
 	static const size_t FONT_DATA_UNCOMPRESSED_SIZE = 38384;
-	static const uint32_t FONT_DATA[] = 
+	static const uint32_t FONT_DATA[] =
 	{
 		0x4595EF1B,0x38D87307,0x78E031A0,0xCDD3059B,0xB238F29D,0x919D5A06,0xEB527276,0x253FFE6E,0x580631D0,0x35B341FB,0xEC984128,0x52743656,
 		0x2BB4C13D,0x4827DCED,0x242A1426,0x667DE3A5,0x6D0A6372,0x2A1119CB,0x1DDF1DB4,0x12ACC74D,0x38B7DF5D,0x6642504E,0x67E1C7BD,0x95FCBEBB,
@@ -328,10 +328,10 @@ namespace graphtail
 		// Decompress TTF font
 		m_data = new uint8_t[FONT_DATA_UNCOMPRESSED_SIZE];
 		m_size = FONT_DATA_UNCOMPRESSED_SIZE;
-		BrotliDecoderResult result = BrotliDecoderDecompress(FONT_DATA_COMPRESSED_SIZE, (const uint8_t*)FONT_DATA, &m_size, m_data);		
+		BrotliDecoderResult result = BrotliDecoderDecompress(FONT_DATA_COMPRESSED_SIZE, (const uint8_t*)FONT_DATA, &m_size, m_data);
 		GRAPHTAIL_ASSERT(result == BROTLI_DECODER_RESULT_SUCCESS);
 	}
-	
+
 	FontData::~FontData()
 	{
 		delete [] m_data;

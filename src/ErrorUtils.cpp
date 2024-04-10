@@ -28,9 +28,9 @@ namespace graphtail
 			#endif
 
 			exit(EXIT_FAILURE);
-		}			
+		}
 
-		void			
+		void
 		AssertFailed(
 			const char*		aFile,
 			int				aLineNum,

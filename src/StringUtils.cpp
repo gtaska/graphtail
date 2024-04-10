@@ -5,9 +5,9 @@
 namespace graphtail::StringUtils
 {
 
-	std::string		
+	std::string
 	FloatToString(
-		float			aValue, 
+		float			aValue,
 		bool			aIsSize)
 	{
 		char buffer[256];

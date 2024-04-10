@@ -68,7 +68,7 @@ namespace graphtail
 
 	}
 
-	void	
+	void
 	Help::PrintCommandLine() const
 	{
 		printf("usage: graphtail [options] <input files>\n"
@@ -134,7 +134,7 @@ namespace graphtail
 			"        Render columns 'foo1', 'foo2', 'foo3', and 'foo4' as a histogram\n"
 			"        heatmap named 'foo'. Cells of the heatmap must have a value of\n"
 			"        at least 0 to be rendered.\n"
-		);	
+		);
 
 		printf("\nconfig:\n"
 			"\n"
@@ -159,11 +159,11 @@ namespace graphtail
 		);
 	}
 
-	void	
+	void
 	Help::PrintMarkdown() const
 	{
 		printf("Option|Description\n-|-\n");
-		
+
 		for (const std::unique_ptr<Entry>& t : m_entries)
 		{
 			for(size_t i = 0; i < t->m_options.size(); i++)
@@ -199,7 +199,7 @@ namespace graphtail
 
 	//---------------------------------------------------------------------------
 
-	void	
+	void
 	Help::_DefineEntry(
 		bool							aGroup,
 		const std::vector<std::string>& aOptions,
@@ -212,7 +212,7 @@ namespace graphtail
 		t->m_group = aGroup;
 	}
 
-	void	
+	void
 	Help::_PrintIndent() const
 	{
 		for(size_t i = 0; i < 4; i++)

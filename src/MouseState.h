@@ -39,7 +39,7 @@ namespace graphtail
 				updated = true;
 
 				m_isMoving = true;
-				m_position = mouse;				
+				m_position = mouse;
 			}
 			else
 			{

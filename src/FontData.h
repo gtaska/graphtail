@@ -5,7 +5,7 @@ namespace graphtail
 
 	class FontData
 	{
-	public: 
+	public:
 						FontData();
 						~FontData();
 

@@ -13,13 +13,13 @@ namespace graphtail
 		if(aWildcard != NULL)
 			Set(aWildcard);
 	}
-	
+
 	Wildcard::~Wildcard()
 	{
 
 	}
 
-	void	
+	void
 	Wildcard::Set(
 		const char*		aWildcard)
 	{
@@ -38,7 +38,7 @@ namespace graphtail
 			char c = *p++;
 
 			if(c == '*')
-			{			
+			{
 				if(part.m_matchLen > 0)
 				{
 					m_parts.push_back(part);
@@ -55,7 +55,7 @@ namespace graphtail
 
 				break;
 			}
-			else 
+			else
 			{
 				part.m_match += c;
 				part.m_matchLen++;
@@ -65,7 +65,7 @@ namespace graphtail
 		m_anyEnd = part.m_matchLen == 0 && part.m_anyPrefix;
 	}
 
-	bool	
+	bool
 	Wildcard::Match(
 		const char*		aString) const
 	{
@@ -103,7 +103,7 @@ namespace graphtail
 
 	//----------------------------------------------------------------------
 
-	int		
+	int
 	Wildcard::_Find(
 		const char*		aString,
 		int				aStringLen,
@@ -111,7 +111,7 @@ namespace graphtail
 		int				aMatchLen) const
 	{
 		int n = aStringLen - aMatchLen;
-		
+
 		for(int i = 0; i <= n; i++)
 		{
 			if(_Match(aString + i, aStringLen - i, aMatch, aMatchLen))

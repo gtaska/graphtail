@@ -43,5 +43,5 @@ namespace graphtail
 		std::chrono::milliseconds							m_interval;
 		std::chrono::time_point<std::chrono::steady_clock>	m_expiresAt;
 	};
-	
+
 }

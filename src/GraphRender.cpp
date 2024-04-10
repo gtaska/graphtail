@@ -19,7 +19,7 @@ namespace graphtail
 
 	}
 
-	void	
+	void
 	GraphRender::Draw(
 		RenderContext*				aDrawContext,
 		const Graphs::DataGroup*	aDataGroup,
@@ -101,7 +101,7 @@ namespace graphtail
 
 	//-----------------------------------------------------------------------------------
 
-	void		
+	void
 	GraphRender::_CreateStretchGraph(
 		RenderContext*			aDrawContext,
 		const Graphs::Data*		aData,
@@ -145,8 +145,8 @@ namespace graphtail
 		}
 
 	}
-	
-	void		
+
+	void
 	GraphRender::_CreateFixedXStepGraph(
 		RenderContext*			aDrawContext,
 		const Graphs::Data*		aData,
@@ -169,8 +169,8 @@ namespace graphtail
 			GRAPHTAIL_ASSERT(i < aData->m_values.size());
 			int y = aDrawContext->m_dataGroupWindowHeight - (int)(((aData->m_values[i] - aValueMin) / aValueRange) * (float)(aDrawContext->m_dataGroupWindowHeight - 1)) + aDrawContext->m_dataGroupY - 1;
 
-			if (x < aDrawContext->m_mouseState->m_position.x + aXStep / 2)		
-				aOutCursorIndex = i;		
+			if (x < aDrawContext->m_mouseState->m_position.x + aXStep / 2)
+				aOutCursorIndex = i;
 
 			if (m_stickyCursor.has_value() && i == m_stickyCursor->m_index)
 				aOutCursorX = x;

@@ -4,7 +4,7 @@
 #include "ErrorUtils.h"
 #include "Wildcard.h"
 
-namespace 
+namespace
 {
 
 	struct InputFile
@@ -54,7 +54,7 @@ namespace
 			case '\t':
 			case '\0':
 				return true;
-			
+
 			default:
 				return false;
 			}
@@ -66,7 +66,7 @@ namespace
 		size_t			m_size;
 	};
 
-	std::pair<std::string, std::string> 
+	std::pair<std::string, std::string>
 	_ParseCommandLineArgument(
 		const char*										aArg)
 	{
@@ -152,7 +152,7 @@ namespace
 
 			switch(commentState)
 			{
-			case COMMENT_STATE_NONE:	
+			case COMMENT_STATE_NONE:
 				// We can safely look ahead 1 because of null termination
 				if(c == '/' && file.m_data[i + 1] == '*')
 				{
@@ -168,7 +168,7 @@ namespace
 				}
 				break;
 
-			case COMMENT_STATE_C_STYLE:				
+			case COMMENT_STATE_C_STYLE:
 				if (c == '*' && file.m_data[i + 1] == '/')
 				{
 					commentState = COMMENT_STATE_NONE;
@@ -220,7 +220,7 @@ namespace
 					{
 						argName = identifier;
 						value.clear();
-						parseState = PARSE_STATE_VALUE;						
+						parseState = PARSE_STATE_VALUE;
 					}
 				}
 				else if (_IsAlpha(c) || c == '_')
@@ -267,7 +267,7 @@ namespace
 					value.push_back('\0');
 					argName = &value[0];
 					value.clear();
-					parseState = PARSE_STATE_MULTI_LINE_VALUE;					
+					parseState = PARSE_STATE_MULTI_LINE_VALUE;
 				}
 				else if (_IsAlpha(c))
 				{
@@ -309,11 +309,11 @@ namespace
 		return aString[0];
 	}
 
-	size_t 
+	size_t
 	_ParseInput(
 		const char*												aString,
 		graphtail::Config::Group*								aGroup)
-	{		
+	{
 		size_t i = 0;
 		GRAPHTAIL_CHECK(aString[i++] == '(', "Unexpected '%c' in group input definition (expected '(').", aString[0]);
 		std::vector<char> value;
@@ -322,7 +322,7 @@ namespace
 		{
 			char c = aString[i++];
 			GRAPHTAIL_CHECK(c != '\0', "Unexpected null-termination in group input definition.");
-			 
+
 			if(c == ')')
 				break;
 			else
@@ -429,7 +429,7 @@ namespace
 				inValue = true;
 			}
 			else if(inValue)
-			{				
+			{
 				value.push_back(c);
 			}
 			else
@@ -517,7 +517,7 @@ namespace
 namespace graphtail
 {
 
-	bool	
+	bool
 	Config::GroupConfig::TrySetMember(
 		const std::string&										aArg,
 		const std::string&										aValue)
@@ -552,7 +552,7 @@ namespace graphtail
 		return false;
 	}
 
-	void	
+	void
 	Config::GroupConfig::ApplyDefaults(
 		const GroupConfig&										aDefaults)
 	{
@@ -647,7 +647,7 @@ namespace graphtail
 		for(std::unique_ptr<Group>& group : m_groups)
 			group->m_config.ApplyDefaults(m_defaultGroupConfig);
 	}
-	
+
 	Config::~Config()
 	{
 

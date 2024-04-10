@@ -31,7 +31,7 @@ namespace graphtail
 			m_dataGroups.push_back(std::move(group));
 		}
 	}
-	
+
 	Graphs::~Graphs()
 	{
 
@@ -39,9 +39,9 @@ namespace graphtail
 
 	//-------------------------------------------------------------------------------------
 
-	void	
+	void
 	Graphs::OnDataReset(
-		const char*			aId) 
+		const char*			aId)
 	{
 		std::unordered_map<std::string, Data*>::iterator i = m_dataTable.find(aId);
 		if (i == m_dataTable.end())
@@ -84,11 +84,11 @@ namespace graphtail
 
 		m_version++;
 	}
-	
-	void	
+
+	void
 	Graphs::OnData(
 		const char*			aId,
-		float				aValue) 
+		float				aValue)
 	{
 		_GetData(aId)->AddValue(aValue);
 

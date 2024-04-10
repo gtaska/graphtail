@@ -58,7 +58,7 @@ namespace graphtail
 		m_font = TTF_OpenFontRW(m_fontDataRW, SDL_TRUE, (int)m_config->m_fontSize);
 		GRAPHTAIL_CHECK(m_font != NULL, "TTF_OpenFontRW() failed: %s", TTF_GetError());
 	}
-	
+
 	Window::~Window()
 	{
 		GRAPHTAIL_ASSERT(m_window != NULL);
@@ -73,15 +73,15 @@ namespace graphtail
 		SDL_Quit();
 	}
 
-	bool	
+	bool
 	Window::Update()
 	{
 		SDL_Event event;
-		while (SDL_PollEvent(&event) != 0) 
+		while (SDL_PollEvent(&event) != 0)
 		{
 			switch(event.type)
 			{
-			case SDL_QUIT:	
+			case SDL_QUIT:
 				return false;
 
 			case SDL_WINDOWEVENT:
@@ -106,7 +106,7 @@ namespace graphtail
 		}
 
 		if(m_mouseState.Update(m_window))
-		{	
+		{
 			// If mouse moves we need to redraw since it hover over something
 			m_windowIsDirty = true;
 		}
@@ -114,7 +114,7 @@ namespace graphtail
 		return true;
 	}
 
-	void	
+	void
 	Window::DrawGraphs(
 		const Graphs&	aGraphs)
 	{
@@ -134,11 +134,11 @@ namespace graphtail
 		if(dataGroups.size() > 0)
 		{
 			context.m_dataGroupWindowHeight = windowHeight / (int)dataGroups.size();
-			
+
 			bool alternatingBackground = false;
 
 			for(const std::unique_ptr<Graphs::DataGroup>& dataGroup : dataGroups)
-			{		
+			{
 				bool mouseCursorInDataGroup = m_mouseState.m_isInWindow && m_mouseState.m_position.y >= context.m_dataGroupY && m_mouseState.m_position.y < context.m_dataGroupY + context.m_dataGroupWindowHeight;
 
 				// Draw group background and set up clipping
@@ -161,11 +161,11 @@ namespace graphtail
 				}
 
 				if(dataGroup->m_config->m_histogram)
-				{					
+				{
 					// Data group is a histogram heatmap
 					m_histogramHeatmapRender.Draw(&context, dataGroup.get(), mouseCursorInDataGroup);
 				}
-				else 
+				else
 				{
 					// Data group is a bunch of normal line graphs
 					if (dataGroup->m_data.size() > 0)

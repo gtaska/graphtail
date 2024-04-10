@@ -14,7 +14,7 @@ main(
 	graphtail::Config config(aNumArgs, aArgs);
 
 	if(config.m_showHelp)
-	{		
+	{
 		printf("graphtail " GRAPHTAIL_VERSION "\n");
 
 		graphtail::Help help;
@@ -23,10 +23,10 @@ main(
 			help.PrintMarkdown();
 		else
 			help.PrintCommandLine();
-		
+
 		return EXIT_SUCCESS;
 	}
-	
+
 	graphtail::Window window(&config);
 	graphtail::Graphs graphs(&config);
 

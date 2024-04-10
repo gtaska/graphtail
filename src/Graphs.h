@@ -75,7 +75,7 @@ namespace graphtail
 			{
 				m_data.push_back(std::make_unique<Data>(aId));
 				return m_data[m_data.size() - 1].get();
-			}			
+			}
 
 			float
 			GetMin() const
@@ -117,7 +117,7 @@ namespace graphtail
 
 			// Public data
 			const Config::Group*				m_config;
-			std::vector<std::unique_ptr<Data>>	m_data;			
+			std::vector<std::unique_ptr<Data>>	m_data;
 			bool								m_isAutoGroup;
 		};
 
@@ -139,7 +139,7 @@ namespace graphtail
 	private:
 
 		const Config*													m_config;
-		
+
 		std::vector<std::unique_ptr<DataGroup>>							m_dataGroups;
 		std::unordered_map<std::string, Data*>							m_dataTable;
 

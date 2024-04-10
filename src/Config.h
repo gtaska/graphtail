@@ -41,7 +41,7 @@ namespace graphtail
 			std::vector<std::unique_ptr<Wildcard>>	m_idWildcards;
 			GroupConfig								m_config;
 			std::unique_ptr<GroupHistogram>			m_histogram;
-		};		
+		};
 
 					Config(
 						int						aNumArgs,
@@ -60,8 +60,8 @@ namespace graphtail
 		bool										m_showHelp = false;
 		bool										m_showHelpMarkdown = false;
 
-		std::vector<Color>							m_graphColors = 
-		{ 
+		std::vector<Color>							m_graphColors =
+		{
 			{ 255, 0, 0 },
 			{ 0, 255, 0 },
 			{ 64, 64, 255 },

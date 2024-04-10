@@ -31,8 +31,8 @@ namespace graphtail
 
 		void				Update();
 
-	private:	
-		
+	private:
+
 		std::string					m_path;
 		IListener*					m_listener;
 		const Config*				m_config;
@@ -44,7 +44,7 @@ namespace graphtail
 		size_t						m_currentColumnIndex;
 		bool						m_hasHeaders;
 		std::vector<std::string>	m_headers;
-		
+
 		char						m_parseBuffer[256];
 		size_t						m_parseBufferBytes;
 
