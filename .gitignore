@@ -3,3 +3,4 @@ attic/
 data/
 docs/html/
 docs/latex/
+.vscode/settings.json
