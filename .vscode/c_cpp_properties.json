@@ -6,6 +6,7 @@
                 "${workspaceFolder}/**"
             ],
             "defines": [
+                "GRAPHTAIL_VERSION=\"0.0.0\""
             ],
             "cStandard": "c11",
             "cppStandard": "c++20",
