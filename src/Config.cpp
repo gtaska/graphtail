@@ -296,6 +296,11 @@ namespace
 				break;
 			}
 		}
+
+		if(parseState == PARSE_STATE_MULTI_LINE_VALUE)
+		{
+			GRAPHTAIL_FATAL_ERROR("%s: 'begin' keyword encountered without corresponding 'end'\n", aPath);
+		}
 	}
 
 	char
