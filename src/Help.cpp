@@ -15,7 +15,7 @@ namespace graphtail
 
 		_DefineEntry(false, { "column_delim=<character>" },
 		{
-			"Character used as column deliminator in CSV files. Defaults to ';'."
+			"Character used as column deliminator in CSV files. Defaults to ','."
 		});
 
 		_DefineEntry(false, { "width=<width>", "height=<height>" },

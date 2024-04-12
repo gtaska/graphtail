@@ -50,7 +50,7 @@ namespace graphtail
 
 		// Public data
 		char										m_rowDelimiter = '\n';
-		char										m_columnDelimiter = ';';
+		char										m_columnDelimiter = ',';
 		std::vector<std::string>					m_inputs;
 		uint32_t									m_width = 1000;
 		uint32_t									m_height = 500;
