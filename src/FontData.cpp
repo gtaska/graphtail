@@ -7,8 +7,19 @@
 
 namespace
 {
-
 	// Hack Regular (Redux) TTF font from https://github.com/source-foundry/Hack
+	//
+	// Font file contains:
+	//
+	// - Digits '0'-'9'
+	// - Latin Capital Letters 'A'-'Z'
+	// - Latin Small Letters 'a'-'z'
+	// - Space ' '
+	// - Hypen '-'
+	// - Period '.'
+	// - Colon ':'
+	// - Underscore '_'
+	//
 	// Brotli-compressed to reduce source code size
 	static const size_t FONT_DATA_COMPRESSED_SIZE = 14196;
 	static const size_t FONT_DATA_UNCOMPRESSED_SIZE = 38384;
